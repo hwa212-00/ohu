@@ -30,6 +30,6 @@ jobs:
           http-server -p 8080 &
           SERVER_PID=$!
           sleep 2
-          axe-core http://localhost:8080/index.html http://localhost:8080/login.html http://localhost:8080/profile.html --exit || TEST_RESULT=$?
+          axe http://localhost:8080/index.html http://localhost:8080/login.html http://localhost:8080/profile.html --exit || TEST_RESULT=$?
           kill $SERVER_PID
           exit ${TEST_RESULT:-0}
