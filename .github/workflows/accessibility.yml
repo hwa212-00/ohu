@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: axe-cli 및 axe-core 사전 설치
-        run: npm install -g axe-cli axe-core
+      - name: @axe-core/cli 설치
+        run: npm install -g @axe-core/cli
 
       - name: aXe 접근성 검사 실행
         run: axe index.html login.html profile.html --exit
