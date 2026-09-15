@@ -14,7 +14,11 @@ jobs:
       - name: 코드 가져오기
         uses: actions/checkout@v4
 
-      - name: aXe 접근성 검사 실행
-        uses: axe-core/axe-action@v1
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
         with:
-          paths: 'index.html, login.html, profile.html'
+          node-version: '20'
+
+      - name: Chrome 브라우저 및 aXe 실행
+        run: |
+          npx axe-cli index.html login.html profile.html --exit
