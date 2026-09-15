@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Chrome 브라우저 및 aXe 실행
-        run: |
-          npx axe-cli index.html login.html profile.html --exit
+      - name: axe-cli 및 axe-core 사전 설치
+        run: npm install -g axe-cli axe-core
+
+      - name: aXe 접근성 검사 실행
+        run: axe index.html login.html profile.html --exit
