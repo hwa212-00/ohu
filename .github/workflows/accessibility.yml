@@ -15,6 +15,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: aXe 접근성 검사 실행
-        uses: axe-hoist/axe-action@v1
+        uses: axe-core/axe-action@v1
         with:
           paths: 'index.html, login.html, profile.html'
