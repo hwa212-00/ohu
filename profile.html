@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로필 설정 | 오후정미소</title>
+<meta name="description" content="오후정미소 계정의 기본 정보, 비밀번호, 알림 설정을 관리합니다.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== 로그인 페이지와 동일한 디자인 토큰 (일관성 유지) ===== */
+  :root{
+    --bg: #FBF8F3;
+    --bg-alt: #F1E7D5;
+    --surface: #FFFFFF;
+    --text: #2A2420;
+    --text-muted: #5B4F45;
+    --primary-dark: #6B3819;
+    --accent: #4B5D3A;
+    --border: #D9CCB8;
+    --border-strong: #B9A183;
+    --focus-ring: #B23A1E;
+    --footer-bg: #2A2420;
+    --footer-text: #F1E7D5;
+    --footer-text-muted: #C9BBA8;
+
+    --font-display: "Noto Serif KR", "Malgun Gothic", serif;
+    --font-body: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+
+    --scale: 1;
+    --container: 40rem;
+  }
+
+  html[data-contrast="high"]{
+    --bg: #000000;
+    --bg-alt: #000000;
+    --surface: #000000;
+    --text: #FFFFFF;
+    --text-muted: #F2F2F2;
+    --primary-dark: #FFD166;
+    --accent: #8FE3C0;
+    --border: #FFFFFF;
+    --border-strong: #FFFFFF;
+    --focus-ring: #FF7A59;
+    --footer-bg: #000000;
+    --footer-text: #FFFFFF;
+    --footer-text-muted: #FFFFFF;
+  }
+  html[data-contrast="high"] .btn-primary{
+    background: var(--primary-dark);
+    color: #000000;
+    border-color: var(--primary-dark);
+  }
+  html[data-contrast="high"] input[aria-invalid="true"]{
+    background: #000000;
+    border-width: 2px;
+  }
+  html[data-contrast="high"] .form-status.error{ background:#000000; }
+  html[data-contrast="high"] .form-status.success{ background:#000000; }
+  html[data-contrast="high"] .avatar-circle{ color:#000000; }
+  html[data-contrast="high"] .tab[aria-selected="true"]{ background: rgba(255,209,102,0.18); }
+  html[data-contrast="high"] .danger-box{ border-color:#FFFFFF; }
+
+  *,*::before,*::after{ box-sizing: border-box; }
+
+  html{
+    font-size: calc(100% * var(--scale));
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *,*::before,*::as{ }
+    *,*::before,*::after{
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body{
+    margin:0;
+    min-height: 100vh;
+    display:flex;
+    flex-direction: column;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2{ font-family: var(--font-display); line-height: 1.3; color: var(--text); }
+
+  a{ color: var(--primary-dark); }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  [tabindex]:focus-visible{
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .skip-link{
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    background: var(--primary-dark);
+    color: #fff;
+    padding: 0.85rem 1.25rem;
+    border-radius: 0.4rem;
+    font-weight: 700;
+    z-index: 100;
+    transition: top .15s ease;
+  }
+  .skip-link:focus{ top: 1rem; }
+
+  .sr-only{
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .container{
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ===== 헤더 ===== */
+  .site-header{
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .util-bar{
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    --focus-ring: #FFFFFF;
+  }
+  .util-bar .container{
+    max-width: 64rem;
+    display:flex;
+    flex-wrap: wrap;
+    align-items:center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .util-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:0.3rem;
+    background: transparent;
+    color: var(--footer-text);
+    border: 1px solid var(--footer-text-muted);
+    border-radius: 0.3rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+  }
+  .util-btn:hover{ background: rgba(255,255,255,0.12); }
+  .util-btn[aria-pressed="true"]{
+    background: var(--footer-text);
+    color: var(--footer-bg);
+    font-weight: 700;
+  }
+  .util-status{
+    display:inline-flex;
+    align-items:center;
+    min-width: 4.5rem;
+    justify-content:center;
+    padding: 0.35rem 0.5rem;
+    font-weight: 700;
+    color: var(--footer-text);
+  }
+
+  .header-inner{
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 1.1rem 1.5rem;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .logo{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--text);
+    text-decoration:none;
+    display:flex;
+    align-items:baseline;
+    gap: 0.5rem;
+  }
+  .logo:hover{ color: var(--primary-dark); }
+  .logo .logo-sub{
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap: 0.35rem;
+    text-decoration:none;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+  .back-link:hover{ color: var(--primary-dark); }
+  .back-link svg{ width: 1rem; height: 1rem; }
+
+  /* ===== 본문 ===== */
+  main{ flex: 1 1 auto; }
+  .page-section{ width: 100%; padding: 2.75rem 0 4rem; }
+
+  .eyebrow{
+    display:inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--primary-dark);
+    background: rgba(138,74,35,0.10);
+    border: 1px solid rgba(138,74,35,0.35);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
+  }
+  html[data-contrast="high"] .eyebrow{
+    background:#000; border:2px solid var(--primary-dark); color:var(--primary-dark);
+  }
+
+  .page-section h1{ font-size: 1.75rem; margin: 0 0 0.5rem; }
+  .page-lede{
+    margin: 0 0 2rem;
+    color: var(--text-muted);
+    font-size: 0.98rem;
+    max-width: 32rem;
+  }
+
+  /* ===== 프로필 요약(아바타) ===== */
+  .profile-summary{
+    display:flex;
+    align-items:center;
+    gap: 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.75rem;
+  }
+  .avatar-circle{
+    flex: 0 0 auto;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: var(--primary-dark);
+    color: #FFFFFF;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.35rem;
+  }
+  .profile-summary-text{ flex: 1 1 auto; min-width: 0; }
+  .profile-summary-name{ font-weight: 700; font-size: 1.05rem; margin: 0 0 0.2rem; }
+  .profile-summary-email{ margin: 0; color: var(--text-muted); font-size: 0.88rem; overflow-wrap: anywhere; }
+  .avatar-change-btn{
+    flex: 0 0 auto;
+    background: transparent;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 0.4rem;
+    padding: 0.5rem 0.85rem;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .avatar-change-btn:hover{ background: var(--bg-alt); }
+
+  /* ===== 탭 (메인 페이지와 동일한 WAI-ARIA Tabs 패턴: 방향키 이동 + Enter/Space 활성화) ===== */
+  .tablist{
+    display:flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.75rem;
+    /* overflow-x:auto가 지정되면 overflow-y도 auto로 계산되어, 포커스 아웃라인이
+       상하로 잘려 보일 수 있다. 아웃라인(3px)+오프셋(3px)이 들어갈 여백을 사방에 확보한다. */
+    padding: 0.5rem 0.4rem;
+  }
+  .tab{
+    flex: 0 0 auto;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0.35rem 0.35rem 0 0;
+    padding: 0.65rem 0.95rem;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tab:hover{ background: var(--bg-alt); }
+  .tab[aria-selected="true"]{
+    color: var(--primary-dark);
+    font-weight: 700;
+    background: var(--bg-alt);
+    border-bottom-color: var(--primary-dark);
+  }
+  .tab[aria-selected="true"]::after{
+    content:"";
+    display:inline-block;
+    width: 6px; height: 6px;
+    margin-left: 0.5rem;
+    border-radius: 50%;
+    background: var(--primary-dark);
+  }
+
+  .tabpanel{ }
+
+  /* ===== 폼 공통 (로그인 페이지와 동일) ===== */
+  .form-row{ margin-bottom: 1.25rem; }
+  .form-row label{
+    display:block;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+    font-size: 0.95rem;
+  }
+  .required-mark{ color: var(--primary-dark); font-weight: 700; }
+  .hint{
+    display:block;
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+  }
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  input[type="tel"],
+  input[type="date"]{
+    width:100%;
+    font: inherit;
+    padding: 0.7rem 0.85rem;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 0.4rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  input[aria-invalid="true"]{
+    border-color: var(--focus-ring);
+    background: #FCEDE9;
+  }
+  html[data-contrast="high"] input[aria-invalid="true"]{ background:#000; }
+
+  .error-text{
+    display:flex;
+    gap: 0.4rem;
+    align-items:flex-start;
+    color: var(--focus-ring);
+    font-size: 0.87rem;
+    margin-top: 0.4rem;
+    font-weight: 700;
+  }
+
+  .password-field{ position: relative; }
+  .password-field input{ padding-right: 3rem; }
+  .password-toggle{
+    position: absolute;
+    top: 50%;
+    right: 0.4rem;
+    transform: translateY(-50%);
+    width: 2.2rem;
+    height: 2.2rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .password-toggle:hover{ background: var(--bg-alt); color: var(--text); }
+  .password-toggle svg{ width: 1.15rem; height: 1.15rem; }
+  /* hidden 속성 대신 클래스로 표시 여부를 전환한다 (이 프로젝트에서 [hidden]이 다른 CSS
+     규칙에 밀려 무시되는 문제를 여러 번 겪었기 때문에, 애초에 충돌 여지가 없는 방식을 쓴다). */
+  .password-toggle svg.icon-off{ display:none; }
+
+  .checkbox-row{
+    display:flex;
+    align-items:flex-start;
+    gap: 0.6rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .checkbox-row:last-of-type{ border-bottom: none; }
+  .checkbox-row input{ width: 1.1rem; height: 1.1rem; margin-top: 0.2rem; flex: 0 0 auto; }
+  .checkbox-row-text{ flex: 1 1 auto; }
+  .checkbox-row-title{ font-weight: 700; font-size: 0.95rem; display:block; }
+  .checkbox-row-desc{ display:block; color: var(--text-muted); font-size: 0.85rem; margin-top: 0.15rem; }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: 0.5rem;
+    text-decoration:none;
+    font-weight: 700;
+    font-size: 0.98rem;
+    border: 2px solid transparent;
+    cursor:pointer;
+    font-family: var(--font-body);
+  }
+  .btn-primary{ background: var(--primary-dark); color: #fff; }
+  .btn-primary:hover{ background: #52290f; }
+  .btn-outline{
+    background: transparent;
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+  .btn-outline:hover{ background: var(--bg-alt); }
+  .btn-danger{
+    background: transparent;
+    border-color: var(--focus-ring);
+    color: var(--focus-ring);
+  }
+  .btn-danger:hover{ background: rgba(178,58,30,0.08); }
+  .btn-danger-solid{ background: var(--focus-ring); color: #fff; border-color: var(--focus-ring); }
+  .btn-danger-solid:hover{ background: #8f2e17; border-color:#8f2e17; }
+
+  .form-status{
+    border-radius: 0.5rem;
+    padding: 0.85rem 1rem;
+    margin: 0 0 1.25rem;
+    font-weight: 700;
+    font-size: 0.92rem;
+    display:none;
+  }
+  .form-status.is-visible{ display:block; }
+  .form-status.success{ background: rgba(75,93,58,0.12); color: var(--accent); border: 1px solid var(--accent); }
+  .form-status.error{ background: rgba(178,58,30,0.1); color: var(--focus-ring); border: 1px solid var(--focus-ring); }
+  .form-status.loading{ background: var(--bg-alt); color: var(--text-muted); border: 1px solid var(--border); }
+
+  /* ===== 계정 관리 탭 ===== */
+  .account-block{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .account-block h2{ font-size: 1.05rem; margin: 0 0 0.4rem; }
+  .account-block p{ margin: 0 0 1rem; color: var(--text-muted); font-size: 0.9rem; }
+
+  .danger-box{
+    border: 1.5px solid var(--focus-ring);
+    border-radius: 0.6rem;
+    padding: 1.1rem 1.2rem;
+    margin-top: 1rem;
+    background: rgba(178,58,30,0.05);
+  }
+  .danger-box p{ color: var(--text); margin: 0 0 1rem; font-size: 0.92rem; }
+  .danger-box-actions{ display:flex; gap: 0.6rem; flex-wrap: wrap; }
+
+  /* ===== 푸터 ===== */
+  .site-footer{
+    background: var(--footer-bg);
+    color: var(--footer-text-muted);
+    padding: 1.75rem 0;
+    font-size: 0.85rem;
+    --focus-ring: #FFFFFF;
+  }
+  .site-footer .container{
+    max-width: 64rem;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .site-footer a{ color: var(--footer-text); }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">본문 바로가기</a>
+
+<header class="site-header">
+  <div class="util-bar">
+    <div class="container">
+      <span id="text-size-label" class="sr-only">글자 크기 조절</span>
+      <button type="button" class="util-btn" id="font-decrease" aria-describedby="text-size-label">
+        <span aria-hidden="true">가−</span><span class="sr-only">글자 작게</span>
+      </button>
+      <span id="font-size-status" class="util-status" role="status" aria-live="polite">글자 크기 100%</span>
+      <button type="button" class="util-btn" id="font-increase" aria-describedby="text-size-label">
+        <span aria-hidden="true">가+</span><span class="sr-only">글자 크게</span>
+      </button>
+      <button type="button" class="util-btn" id="font-reset">글자 크기 초기화</button>
+      <button type="button" class="util-btn" id="contrast-toggle" aria-pressed="false">고대비 모드</button>
+    </div>
+  </div>
+
+  <div class="header-inner">
+    <a class="logo" href="index.html" aria-label="오후정미소, 홈으로 이동">
+      오후정미소 <span class="logo-sub">Ohu Jeongmiso</span>
+    </a>
+    <a class="back-link" href="index.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      홈으로 돌아가기
+    </a>
+  </div>
+</header>
+
+<main id="main-content" tabindex="-1">
+  <div class="page-section">
+    <div class="container">
+      <p class="eyebrow">MY PROFILE</p>
+      <h1>프로필 설정</h1>
+      <p class="page-lede">기본 정보와 비밀번호, 알림 수신 여부를 관리할 수 있습니다. (프런트엔드 시연용 페이지로, 저장 내용은 실제로 서버에 반영되지 않습니다.)</p>
+
+      <div class="profile-summary">
+        <div class="avatar-circle" id="avatar-circle" aria-hidden="true">홍</div>
+        <div class="profile-summary-text">
+          <p class="profile-summary-name" id="avatar-name">홍길동</p>
+          <p class="profile-summary-email">hong@example.com</p>
+        </div>
+        <button type="button" class="avatar-change-btn" id="avatar-change-btn">사진 변경</button>
+      </div>
+
+      <nav aria-label="프로필 설정 메뉴">
+        <div class="tablist" role="tablist" aria-label="프로필 설정 항목">
+          <button type="button" role="tab" id="tab-basic" class="tab" aria-selected="true" aria-controls="panel-basic" tabindex="0">기본 정보</button>
+          <button type="button" role="tab" id="tab-password" class="tab" aria-selected="false" aria-controls="panel-password" tabindex="-1">비밀번호 변경</button>
+          <button type="button" role="tab" id="tab-notify" class="tab" aria-selected="false" aria-controls="panel-notify" tabindex="-1">알림 설정</button>
+          <button type="button" role="tab" id="tab-account" class="tab" aria-selected="false" aria-controls="panel-account" tabindex="-1">계정 관리</button>
+        </div>
+      </nav>
+
+      <!-- ================= 기본 정보 ================= -->
+      <section id="panel-basic" class="tabpanel" role="tabpanel" aria-labelledby="tab-basic" tabindex="0">
+        <p id="basic-status" class="form-status" role="status" aria-live="polite"></p>
+        <form id="basic-form" novalidate>
+          <div class="form-row">
+            <label for="basic-nickname">닉네임 <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(필수 입력)</span></label>
+            <input type="text" id="basic-nickname" name="nickname" value="홍길동" autocomplete="nickname" aria-required="true">
+          </div>
+          <div class="form-row">
+            <label for="basic-email">이메일 주소 <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(필수 입력)</span></label>
+            <input type="email" id="basic-email" name="email" value="hong@example.com" autocomplete="email" aria-required="true" aria-describedby="basic-email-hint">
+            <span id="basic-email-hint" class="hint">이메일 주소를 변경하면 재인증 메일이 발송됩니다.</span>
+          </div>
+          <div class="form-row">
+            <label for="basic-phone">전화번호</label>
+            <input type="tel" id="basic-phone" name="phone" autocomplete="tel" placeholder="010-0000-0000" aria-describedby="basic-phone-hint">
+            <span id="basic-phone-hint" class="hint">주문 준비 완료 알림을 문자로 받고 싶다면 입력해 주세요. (선택)</span>
+          </div>
+          <div class="form-row">
+            <label for="basic-birthday">생일</label>
+            <input type="date" id="basic-birthday" name="birthday" aria-describedby="basic-birthday-hint">
+            <span id="basic-birthday-hint" class="hint">생일 쿠폰을 받고 싶다면 입력해 주세요. (선택)</span>
+          </div>
+          <button type="submit" class="btn btn-primary">기본 정보 저장</button>
+        </form>
+      </section>
+
+      <!-- ================= 비밀번호 변경 ================= -->
+      <section id="panel-password" class="tabpanel" role="tabpanel" aria-labelledby="tab-password" tabindex="0" hidden>
+        <p id="password-status" class="form-status" role="status" aria-live="polite"></p>
+        <form id="password-form" novalidate>
+          <div class="form-row">
+            <label for="pw-current">현재 비밀번호 <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(필수 입력)</span></label>
+            <div class="password-field">
+              <input type="password" id="pw-current" name="current" autocomplete="current-password" aria-required="true">
+              <button type="button" class="password-toggle" data-target="pw-current" aria-pressed="true" aria-label="현재 비밀번호 숨기기">
+                <svg class="icon-eye icon-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+                <svg class="icon-eye-slash" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10.6 5.2C11 5.1 11.5 5 12 5c6.4 0 10 7 10 7-.6 1.1-1.7 2.6-3.3 3.9M6.6 6.6C4.4 8 3 10 2 12c0 0 3.6 7 10 7 1.4 0 2.7-.3 3.8-.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="pw-new">새 비밀번호 <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(필수 입력)</span></label>
+            <div class="password-field">
+              <input type="password" id="pw-new" name="new" autocomplete="new-password" aria-required="true" aria-describedby="pw-new-hint">
+              <button type="button" class="password-toggle" data-target="pw-new" aria-pressed="true" aria-label="새 비밀번호 숨기기">
+                <svg class="icon-eye icon-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+                <svg class="icon-eye-slash" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10.6 5.2C11 5.1 11.5 5 12 5c6.4 0 10 7 10 7-.6 1.1-1.7 2.6-3.3 3.9M6.6 6.6C4.4 8 3 10 2 12c0 0 3.6 7 10 7 1.4 0 2.7-.3 3.8-.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <span id="pw-new-hint" class="hint">8자 이상으로 입력해 주세요.</span>
+          </div>
+          <div class="form-row">
+            <label for="pw-confirm">새 비밀번호 확인 <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(필수 입력)</span></label>
+            <div class="password-field">
+              <input type="password" id="pw-confirm" name="confirm" autocomplete="new-password" aria-required="true">
+              <button type="button" class="password-toggle" data-target="pw-confirm" aria-pressed="true" aria-label="새 비밀번호 확인 숨기기">
+                <svg class="icon-eye icon-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+                <svg class="icon-eye-slash" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10.6 5.2C11 5.1 11.5 5 12 5c6.4 0 10 7 10 7-.6 1.1-1.7 2.6-3.3 3.9M6.6 6.6C4.4 8 3 10 2 12c0 0 3.6 7 10 7 1.4 0 2.7-.3 3.8-.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">비밀번호 변경</button>
+        </form>
+      </section>
+
+      <!-- ================= 알림 설정 ================= -->
+      <section id="panel-notify" class="tabpanel" role="tabpanel" aria-labelledby="tab-notify" tabindex="0" hidden>
+        <p id="notify-status" class="form-status" role="status" aria-live="polite"></p>
+        <form id="notify-form" novalidate>
+          <label class="checkbox-row" for="notify-email">
+            <input type="checkbox" id="notify-email" name="notify-email" checked>
+            <span class="checkbox-row-text">
+              <span class="checkbox-row-title">이메일 알림</span>
+              <span class="checkbox-row-desc">주문 확인, 예약 관련 안내를 이메일로 받습니다.</span>
+            </span>
+          </label>
+          <label class="checkbox-row" for="notify-new-menu">
+            <input type="checkbox" id="notify-new-menu" name="notify-new-menu" checked>
+            <span class="checkbox-row-text">
+              <span class="checkbox-row-title">신메뉴·이벤트 알림</span>
+              <span class="checkbox-row-desc">새 메뉴 출시, 시즌 이벤트 소식을 받습니다.</span>
+            </span>
+          </label>
+          <label class="checkbox-row" for="notify-marketing">
+            <input type="checkbox" id="notify-marketing" name="notify-marketing">
+            <span class="checkbox-row-text">
+              <span class="checkbox-row-title">마케팅 정보 수신 동의</span>
+              <span class="checkbox-row-desc">할인 쿠폰, 제휴 혜택 등 광고성 정보를 받습니다. (선택)</span>
+            </span>
+          </label>
+          <button type="submit" class="btn btn-primary" style="margin-top:1.25rem;">알림 설정 저장</button>
+        </form>
+      </section>
+
+      <!-- ================= 계정 관리 ================= -->
+      <section id="panel-account" class="tabpanel" role="tabpanel" aria-labelledby="tab-account" tabindex="0" hidden>
+        <p id="account-status" class="form-status" role="status" aria-live="polite"></p>
+
+        <div class="account-block">
+          <h2>로그아웃</h2>
+          <p>이 기기에서 로그아웃합니다.</p>
+          <button type="button" class="btn btn-outline" id="logout-btn">로그아웃</button>
+        </div>
+
+        <div class="account-block">
+          <h2>회원 탈퇴</h2>
+          <p>계정과 저장된 정보(찜한 메뉴, 주문 내역 등)가 모두 삭제되며 되돌릴 수 없습니다.</p>
+          <button type="button" class="btn btn-danger" id="delete-account-btn" aria-expanded="false" aria-controls="delete-confirm-box">회원 탈퇴</button>
+
+          <div class="danger-box" id="delete-confirm-box" hidden>
+            <p><strong>정말 탈퇴하시겠어요?</strong> 이 작업은 되돌릴 수 없으며, 찜한 메뉴와 장바구니 내역이 모두 사라집니다.</p>
+            <div class="danger-box-actions">
+              <button type="button" class="btn btn-outline" id="delete-cancel-btn">취소</button>
+              <button type="button" class="btn btn-danger-solid" id="delete-confirm-btn">네, 탈퇴합니다</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <p>&copy; 2026 오후정미소. All rights reserved.</p>
+    <a href="index.html">홈으로</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 글자 크기 조절 ---------- */
+  var root = document.documentElement;
+  var step = 0;
+  var MIN = -2, MAX = 3;
+  var fontStatus = document.getElementById('font-size-status');
+
+  function announceFontSize(extraNote){
+    var percent = Math.round((1 + step * 0.1) * 100);
+    var message = '글자 크기 ' + percent + '%';
+    if(extraNote){ message += ' — ' + extraNote; }
+    fontStatus.textContent = '';
+    window.setTimeout(function(){ fontStatus.textContent = message; }, 30);
+  }
+  function applyScale(){
+    root.style.setProperty('--scale', (1 + step * 0.1).toFixed(2));
+  }
+  document.getElementById('font-increase').addEventListener('click', function(){
+    if(step < MAX){ step++; applyScale(); announceFontSize(); }
+    else{ announceFontSize('더 이상 크게 조절할 수 없습니다'); }
+  });
+  document.getElementById('font-decrease').addEventListener('click', function(){
+    if(step > MIN){ step--; applyScale(); announceFontSize(); }
+    else{ announceFontSize('더 이상 작게 조절할 수 없습니다'); }
+  });
+  document.getElementById('font-reset').addEventListener('click', function(){
+    step = 0; applyScale(); announceFontSize('기본값으로 초기화되었습니다');
+  });
+
+  /* ---------- 고대비 모드 ---------- */
+  var contrastBtn = document.getElementById('contrast-toggle');
+  contrastBtn.addEventListener('click', function(){
+    var isHigh = root.getAttribute('data-contrast') === 'high';
+    if(isHigh){
+      root.removeAttribute('data-contrast');
+      contrastBtn.setAttribute('aria-pressed', 'false');
+    } else {
+      root.setAttribute('data-contrast', 'high');
+      contrastBtn.setAttribute('aria-pressed', 'true');
+    }
+  });
+
+  /* ---------- 탭 (수동 활성화 패턴: 방향키는 포커스만, Enter/Space로 실제 선택) ---------- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = {
+    basic: document.getElementById('panel-basic'),
+    password: document.getElementById('panel-password'),
+    notify: document.getElementById('panel-notify'),
+    account: document.getElementById('panel-account')
+  };
+
+  function keyOf(tabEl){ return tabEl.id.replace('tab-', ''); }
+
+  function moveFocusTo(index){
+    tabs.forEach(function(t, i){ t.setAttribute('tabindex', i === index ? '0' : '-1'); });
+    tabs[index].focus();
+  }
+
+  function activateTab(key){
+    tabs.forEach(function(t){
+      var isTarget = keyOf(t) === key;
+      t.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+      t.setAttribute('tabindex', isTarget ? '0' : '-1');
+    });
+    Object.keys(panels).forEach(function(k){
+      panels[k].hidden = (k !== key);
+    });
+  }
+
+  tabs.forEach(function(tabEl, index){
+    tabEl.addEventListener('click', function(){ activateTab(keyOf(tabEl)); });
+    tabEl.addEventListener('keydown', function(e){
+      var newIndex = null;
+      if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){ newIndex = (index + 1) % tabs.length; }
+      else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ newIndex = (index - 1 + tabs.length) % tabs.length; }
+      else if(e.key === 'Home'){ newIndex = 0; }
+      else if(e.key === 'End'){ newIndex = tabs.length - 1; }
+
+      if(newIndex !== null){ e.preventDefault(); moveFocusTo(newIndex); return; }
+
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault();
+        activateTab(keyOf(tabEl));
+      }
+    });
+  });
+
+  /* ---------- 비밀번호 표시/숨기기 (모든 password-toggle 버튼에 공통 적용) ---------- */
+  function setupPasswordToggle(btn){
+    var input = document.getElementById(btn.getAttribute('data-target'));
+    var eyeIcon = btn.querySelector('.icon-eye');
+    var slashIcon = btn.querySelector('.icon-eye-slash');
+
+    function sync(){
+      var isHidden = input.type === 'password';
+      btn.setAttribute('aria-pressed', String(isHidden));
+      eyeIcon.classList.toggle('icon-off', isHidden);
+      slashIcon.classList.toggle('icon-off', !isHidden);
+    }
+    btn.addEventListener('click', function(){
+      input.type = (input.type === 'password') ? 'text' : 'password';
+      sync();
+    });
+    sync();
+  }
+  Array.prototype.slice.call(document.querySelectorAll('.password-toggle')).forEach(setupPasswordToggle);
+
+  /* ---------- 아바타 이니셜 자동 반영 ---------- */
+  var nicknameField = document.getElementById('basic-nickname');
+  var avatarCircle = document.getElementById('avatar-circle');
+  var avatarName = document.getElementById('avatar-name');
+  function syncAvatarInitial(){
+    var name = nicknameField.value.trim();
+    avatarCircle.textContent = name ? name.charAt(0) : '?';
+    avatarName.textContent = name || '이름 없음';
+  }
+  syncAvatarInitial();
+
+  document.getElementById('avatar-change-btn').addEventListener('click', function(){
+    var status = document.getElementById('basic-status');
+    status.textContent = '사진 변경 기능은 준비 중입니다. 조금만 기다려 주세요.';
+    status.className = 'form-status is-visible loading';
+  });
+
+  /* ---------- 오류 처리 공통 유틸 (로그인 폼과 동일한 패턴) ---------- */
+  function clearFieldError(field){
+    field.removeAttribute('aria-invalid');
+    var err = document.getElementById(field.id + '-error');
+    if(err){ err.parentNode.removeChild(err); }
+  }
+  function setFieldError(field, message){
+    field.setAttribute('aria-invalid', 'true');
+    var existing = document.getElementById(field.id + '-error');
+    if(!existing){
+      existing = document.createElement('span');
+      existing.id = field.id + '-error';
+      existing.className = 'error-text';
+      existing.setAttribute('role', 'alert');
+      var anchor = field.closest('.password-field') || field;
+      anchor.insertAdjacentElement('afterend', existing);
+    }
+    existing.innerHTML = '<span aria-hidden="true">⚠</span> ' + message;
+    var describedBy = field.getAttribute('aria-describedby') || '';
+    if(describedBy.indexOf(existing.id) === -1){
+      field.setAttribute('aria-describedby', (describedBy + ' ' + existing.id).trim());
+    }
+  }
+  function isValidEmail(value){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+  function focusInvalid(field){
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    field.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    field.focus({ preventScroll: true });
+  }
+  function showStatus(el, text, type){
+    el.textContent = text;
+    el.className = 'form-status is-visible ' + type;
+  }
+
+  /* ---------- 기본 정보 저장 ---------- */
+  var basicForm = document.getElementById('basic-form');
+  var basicStatus = document.getElementById('basic-status');
+  var basicEmail = document.getElementById('basic-email');
+
+  nicknameField.addEventListener('input', syncAvatarInitial);
+
+  basicForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    clearFieldError(nicknameField);
+    clearFieldError(basicEmail);
+    basicStatus.className = 'form-status';
+
+    var firstInvalid = null;
+    if(nicknameField.value.trim() === ''){
+      setFieldError(nicknameField, '닉네임을 입력해 주세요.');
+      firstInvalid = firstInvalid || nicknameField;
+    }
+    if(basicEmail.value.trim() === ''){
+      setFieldError(basicEmail, '이메일 주소를 입력해 주세요.');
+      firstInvalid = firstInvalid || basicEmail;
+    } else if(!isValidEmail(basicEmail.value.trim())){
+      setFieldError(basicEmail, '올바른 이메일 주소 형식으로 입력해 주세요.');
+      firstInvalid = firstInvalid || basicEmail;
+    }
+
+    if(firstInvalid){
+      showStatus(basicStatus, '입력 내용을 다시 확인해 주세요. 오류가 있는 항목이 있습니다.', 'error');
+      focusInvalid(firstInvalid);
+      return;
+    }
+
+    syncAvatarInitial();
+    showStatus(basicStatus, '기본 정보가 저장되었습니다. (프런트엔드 시연용으로, 실제로 서버에 반영되지는 않습니다.)', 'success');
+  });
+
+  /* ---------- 비밀번호 변경 ---------- */
+  var passwordForm = document.getElementById('password-form');
+  var passwordStatus = document.getElementById('password-status');
+  var pwCurrent = document.getElementById('pw-current');
+  var pwNew = document.getElementById('pw-new');
+  var pwConfirm = document.getElementById('pw-confirm');
+
+  passwordForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    [pwCurrent, pwNew, pwConfirm].forEach(clearFieldError);
+    passwordStatus.className = 'form-status';
+
+    var firstInvalid = null;
+
+    if(pwCurrent.value === ''){
+      setFieldError(pwCurrent, '현재 비밀번호를 입력해 주세요.');
+      firstInvalid = firstInvalid || pwCurrent;
+    }
+    if(pwNew.value === ''){
+      setFieldError(pwNew, '새 비밀번호를 입력해 주세요.');
+      firstInvalid = firstInvalid || pwNew;
+    } else if(pwNew.value.length < 8){
+      setFieldError(pwNew, '새 비밀번호는 8자 이상으로 입력해 주세요.');
+      firstInvalid = firstInvalid || pwNew;
+    }
+    if(pwConfirm.value === ''){
+      setFieldError(pwConfirm, '새 비밀번호 확인을 입력해 주세요.');
+      firstInvalid = firstInvalid || pwConfirm;
+    } else if(pwNew.value !== '' && pwConfirm.value !== pwNew.value){
+      setFieldError(pwConfirm, '새 비밀번호가 일치하지 않습니다.');
+      firstInvalid = firstInvalid || pwConfirm;
+    }
+
+    if(firstInvalid){
+      showStatus(passwordStatus, '입력 내용을 다시 확인해 주세요. 오류가 있는 항목이 있습니다.', 'error');
+      focusInvalid(firstInvalid);
+      return;
+    }
+
+    passwordForm.reset();
+    Array.prototype.slice.call(document.querySelectorAll('#panel-password .password-toggle')).forEach(function(btn){
+      var input = document.getElementById(btn.getAttribute('data-target'));
+      input.type = 'password';
+      btn.setAttribute('aria-pressed', 'true');
+      btn.querySelector('.icon-eye').classList.add('icon-off');
+      btn.querySelector('.icon-eye-slash').classList.remove('icon-off');
+    });
+    showStatus(passwordStatus, '비밀번호가 변경되었습니다. (프런트엔드 시연용으로, 실제로 서버에 반영되지는 않습니다.)', 'success');
+  });
+
+  /* ---------- 알림 설정 저장 ---------- */
+  var notifyForm = document.getElementById('notify-form');
+  var notifyStatus = document.getElementById('notify-status');
+  notifyForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    showStatus(notifyStatus, '알림 설정이 저장되었습니다.', 'success');
+  });
+
+  /* ---------- 계정 관리: 로그아웃 ---------- */
+  var accountStatus = document.getElementById('account-status');
+  document.getElementById('logout-btn').addEventListener('click', function(){
+    showStatus(accountStatus, '로그아웃되었습니다. 잠시 후 홈으로 이동합니다.', 'loading');
+    window.setTimeout(function(){ window.location.href = 'index.html'; }, 1200);
+  });
+
+  /* ---------- 계정 관리: 회원 탈퇴 (되돌릴 수 없는 작업이므로 2단계 확인) ---------- */
+  var deleteBtn = document.getElementById('delete-account-btn');
+  var deleteBox = document.getElementById('delete-confirm-box');
+  var deleteCancelBtn = document.getElementById('delete-cancel-btn');
+  var deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+
+  deleteBtn.addEventListener('click', function(){
+    deleteBox.hidden = false;
+    deleteBtn.setAttribute('aria-expanded', 'true');
+    deleteCancelBtn.focus();
+  });
+  deleteCancelBtn.addEventListener('click', function(){
+    deleteBox.hidden = true;
+    deleteBtn.setAttribute('aria-expanded', 'false');
+    deleteBtn.focus();
+  });
+  deleteConfirmBtn.addEventListener('click', function(){
+    deleteBox.hidden = true;
+    deleteBtn.setAttribute('aria-expanded', 'false');
+    deleteBtn.disabled = true;
+    showStatus(accountStatus, '탈퇴 처리가 완료되었습니다. (프런트엔드 시연용으로, 실제로 서버에 반영되지는 않습니다.) 잠시 후 홈으로 이동합니다.', 'success');
+    window.setTimeout(function(){ window.location.href = 'index.html'; }, 1600);
+  });
+
+})();
+</script>
+
+</body>
+</html>

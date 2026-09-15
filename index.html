@@ -1,0 +1,4688 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오후정미소 | 옛 정미소를 담은 동네 카페</title>
+<meta name="description" content="1978년 정미소 건물을 그대로 살린 동네 카페, 오후정미소의 공간과 메뉴, 운영시간을 소개합니다.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  /* =====================================================
+     디자인 토큰
+     ===================================================== */
+  :root{
+    --bg: #FBF8F3;
+    --bg-alt: #F1E7D5;
+    --surface: #FFFFFF;
+    --text: #2A2420;
+    --text-muted: #5B4F45;
+    --primary-dark: #6B3819;
+    --accent: #4B5D3A;
+    --border: #D9CCB8;
+    --border-strong: #B9A183;
+    --focus-ring: #B23A1E;
+    --footer-bg: #2A2420;
+    --footer-text: #F1E7D5;
+    --footer-text-muted: #C9BBA8;
+
+    --font-display: "Noto Serif KR", "Malgun Gothic", serif;
+    --font-body: "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+
+    --scale: 1;
+    --container: 72rem;
+  }
+
+  /* 고대비 모드: 배경은 검은색으로 고정하고, 나머지 색상 토큰(글자·테두리·버튼·강조색)이
+     같은 변수 체계를 통해 검은 배경에 자연스럽게 맞춰지도록 구성 */
+  html[data-contrast="high"]{
+    --bg: #000000;
+    --bg-alt: #000000;
+    --surface: #000000;
+    --text: #FFFFFF;
+    --text-muted: #F2F2F2;
+    --primary-dark: #FFD166;
+    --accent: #8FE3C0;
+    --border: #FFFFFF;
+    --border-strong: #FFFFFF;
+    --focus-ring: #FF7A59;
+    --footer-bg: #000000;
+    --footer-text: #FFFFFF;
+    --footer-text-muted: #FFFFFF;
+  }
+  /* 아래 항목들은 색상이 변수가 아닌 고정값(rgba 반투명 등)으로 지정되어 있어
+     고대비 모드에서 배경과 자연스럽게 어울리도록 개별 보정 */
+  html[data-contrast="high"] .eyebrow{
+    background: #000000;
+    border: 2px solid var(--primary-dark);
+    color: var(--primary-dark);
+  }
+  html[data-contrast="high"] .btn-primary{
+    background: var(--primary-dark);
+    color: #000000;
+    border-color: var(--primary-dark);
+  }
+  html[data-contrast="high"] .btn-primary:hover{
+    background: #FFE29B;
+  }
+  html[data-contrast="high"] input[aria-invalid="true"]{
+    background: #000000;
+    border-width: 2px;
+  }
+  html[data-contrast="high"] .form-status.success{
+    background: #000000;
+  }
+  html[data-contrast="high"] .form-status.error{
+    background: #000000;
+  }
+  html[data-contrast="high"] .badge{
+    background: #000000;
+  }
+
+  *,*::before,*::after{ box-sizing: border-box; }
+
+  html{
+    font-size: calc(100% * var(--scale));
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *,*::before,*::after{
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg{ max-width:100%; }
+
+  h1,h2,h3{
+    font-family: var(--font-display);
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  a{ color: var(--primary-dark); }
+  a:not(.btn):not(.icon-link){ text-underline-offset: 0.15em; }
+
+  /* =====================================================
+     포커스 표시 (키보드 접근성) - 절대 outline:none 단독 사용 금지
+     ===================================================== */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible{
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* =====================================================
+     페이지 첫 진입 시 조용히 초점을 두는 빈 대상.
+     화면에 아무것도 보이면 안 되므로, 포커스 링도 명시적으로 없앤다
+     (전역 [tabindex]:focus-visible 규칙이 기본적으로 테두리를 넣어주기 때문).
+     ===================================================== */
+  #initial-focus-target{
+    outline: none;
+  }
+
+  /* =====================================================
+     건너뛰기 링크
+     ===================================================== */
+  .skip-link{
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    background: var(--primary-dark);
+    color: #fff;
+    padding: 0.85rem 1.25rem;
+    border-radius: 0.4rem;
+    font-weight: 700;
+    z-index: 100;
+    transition: top .15s ease;
+  }
+  .skip-link:focus{
+    top: 1rem;
+  }
+
+  .sr-only{
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .container{
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* =====================================================
+     헤더
+     ===================================================== */
+  .site-header{
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .util-bar{
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    /* 어두운 배경 위 기본 포커스 색(--focus-ring)은 대비가 낮아(2.6:1) 잘 안 보이므로
+       이 영역 안에서만 밝은 흰색으로 재지정 (자식 요소가 상속받아 사용) */
+    --focus-ring: #FFFFFF;
+  }
+  .util-bar .container{
+    display:flex;
+    flex-wrap: wrap;
+    align-items:center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .util-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:0.3rem;
+    background: transparent;
+    color: var(--footer-text);
+    border: 1px solid var(--footer-text-muted);
+    border-radius: 0.3rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+  }
+  .util-btn:hover{ background: rgba(255,255,255,0.12); }
+  .util-btn[aria-pressed="true"]{
+    background: var(--footer-text);
+    color: var(--footer-bg);
+    font-weight: 700;
+  }
+  .util-status{
+    display:inline-flex;
+    align-items:center;
+    min-width: 4.5rem;
+    justify-content:center;
+    padding: 0.35rem 0.5rem;
+    font-weight: 700;
+    color: var(--footer-text);
+  }
+
+  .header-inner{
+    display:flex;
+    align-items:center;
+    gap: 1.25rem;
+    padding: 1.1rem 0;
+  }
+  .logo{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--text);
+    text-decoration:none;
+    display:flex;
+    align-items:baseline;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+  }
+  .logo:hover{ color: var(--primary-dark); }
+  .logo .logo-sub{
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* =====================================================
+     상단 우측 유틸 아이콘: 알림 / MY / 장바구니
+     각각 버튼 + 팝오버(모달 다이얼로그: 배경 inert 처리 + 포커스 트랩) 패턴
+     ===================================================== */
+  .header-icons{
+    display:flex;
+    align-items:center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  .popover-wrap{
+    position: relative;
+  }
+  .icon-btn{
+    position: relative;
+    width: 2.6rem;
+    height: 2.6rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background: var(--bg);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 50%;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .icon-btn:hover{ background: var(--bg-alt); }
+  .icon-btn[aria-expanded="true"]{
+    background: var(--bg-alt);
+    border-color: var(--primary-dark);
+    color: var(--primary-dark);
+  }
+  .icon-badge{
+    position: absolute;
+    top: -0.3rem;
+    right: -0.3rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width: 1.3rem;
+    height: 1.3rem;
+    padding: 0 0.3rem;
+    border-radius: 999px;
+    background: var(--primary-dark);
+    color: #FFFFFF;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border: 2px solid var(--bg);
+  }
+  html[data-contrast="high"] .icon-badge{ color: #000000; }
+
+  .icon-svg{
+    width: 1.35rem;
+    height: 1.35rem;
+    display:block;
+    color: currentColor;
+  }
+
+  /* 알림 전용: 새 알림 유무만 표시하는 작은 점 (숫자 없이 존재 여부만 시각적으로 전달) */
+  .icon-dot{
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--focus-ring);
+    border: 2px solid var(--bg);
+  }
+  .icon-dot[hidden]{ display:none; }
+
+  .popover-panel{
+    position: absolute;
+    top: calc(100% + 0.6rem);
+    right: 0;
+    width: 20rem;
+    max-width: 88vw;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 0.6rem;
+    box-shadow: 0 0.6rem 1.5rem rgba(0,0,0,0.18);
+    padding: 1rem;
+    z-index: 60;
+  }
+  /* display:none이 [hidden]의 기본값이지만, 혹시 모를 우선순위 충돌 방지용 명시 규칙 */
+  .popover-panel[hidden]{ display:none; }
+  .popover-panel-wide{ width: 26rem; }
+  .popover-head{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .popover-title{
+    font-size: 1.05rem;
+    margin: 0;
+    font-family: var(--font-display);
+  }
+  .popover-close{
+    width: 2rem;
+    height: 2rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background: transparent;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text);
+    flex: 0 0 auto;
+  }
+  .popover-close:hover{ background: var(--bg-alt); }
+  .popover-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display:flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  /* display:flex가 [hidden]의 기본 display:none보다 우선 적용되는 것을 막기 위한 보정
+     (메뉴 카드에서 겪었던 것과 동일한 문제를 여기서도 미리 방지) */
+  .popover-list[hidden]{ display:none; }
+  .popover-list li{
+    font-size: 0.92rem;
+    line-height: 1.5;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .popover-list li:last-child{ border-bottom: none; padding-bottom: 0; }
+
+  /* 알림 항목: 버튼으로 만들어 클릭하면 읽음/안 읽음이 토글됨 */
+  .notif-item{
+    display:flex;
+    align-items:flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    line-height: inherit;
+  }
+  .notif-item:hover{ color: var(--primary-dark); }
+  /* 안 읽은 알림 앞에 표시되는 점. 색뿐 아니라 존재 자체(있음/없음)로 구분되고,
+     같은 상태 정보를 스크린리더용 텍스트(sr-only)로도 함께 전달한다 */
+  .notif-dot-mark{
+    flex: 0 0 auto;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: 0.5rem;
+    border-radius: 50%;
+    background: var(--focus-ring);
+  }
+  .notif-item.is-read{
+    color: var(--text-muted);
+  }
+
+  .popover-note{
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0 0 1rem;
+  }
+  .popover-empty{
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0 0;
+  }
+  .popover-my-wish h3{
+    font-size: 0.95rem;
+    margin: 0 0 0.6rem;
+  }
+
+  /* MY 패널의 계정 메뉴 (프로필 설정 / 로그인 / 찜한 메뉴 바로가기) */
+  .my-actions{
+    margin: 0 0 0.25rem;
+  }
+  .my-actions li{
+    padding-bottom: 0; /* 버튼 자체 padding으로 간격을 주므로 li의 기본 여백은 끈다 */
+  }
+  .my-action-btn{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0.75rem 0.15rem;
+    font: inherit;
+    font-weight: 600;
+    color: var(--text);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .my-action-btn:hover{ color: var(--primary-dark); }
+  .my-action-btn svg{
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    color: var(--text-muted);
+  }
+  .my-action-btn:hover svg{ color: var(--primary-dark); }
+
+  /* =====================================================
+     탭 내비게이션 (홈 / 메뉴 / 공간 소개 / 오시는 길 / 소식 받기)
+     WAI-ARIA Tabs 패턴 - 화살표 키로는 포커스만 이동, Enter/Space로 수동 활성화
+     ===================================================== */
+  .primary-nav{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .tablist{
+    display:flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    /* overflow-x:auto가 지정되면 overflow-y도 auto로 계산되어, 포커스 아웃라인이
+       상하로 잘려 보일 수 있다. 아웃라인(3px)+오프셋(3px)이 들어갈 여백을 미리 확보 */
+    padding: 0.5rem 0.4rem;
+  }
+  .tab{
+    flex: 0 0 auto;
+    display:inline-flex;
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0.35rem 0.35rem 0 0;
+    padding: 0.7rem 1rem;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tab:hover{ background: var(--bg-alt); }
+  /* 선택된 탭: 색상뿐 아니라 배경, 밑줄(구분선), 점으로 중복 표시 (색에 무관한 인식) */
+  .tab[aria-selected="true"]{
+    color: var(--primary-dark);
+    font-weight: 700;
+    background: var(--bg-alt);
+    border-bottom-color: var(--primary-dark);
+  }
+  .tab[aria-selected="true"]::after{
+    content: "";
+    display:inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 0.5rem;
+    border-radius: 50%;
+    background: var(--primary-dark);
+  }
+  html[data-contrast="high"] .tab[aria-selected="true"]{
+    background: rgba(255, 209, 102, 0.18);
+  }
+
+  .logo-btn{
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+
+  @media (max-width: 42rem){
+    .header-inner{ flex-wrap: wrap; }
+    .primary-nav{ flex-basis: 100%; order: 3; }
+    .header-icons{ order: 2; margin-left: 0; }
+    .logo{ order: 1; }
+    .tablist{
+      width: 100%;
+      border-top: 1px solid var(--border);
+    }
+    .popover-panel{
+      right: -0.5rem;
+    }
+  }
+
+  /* =====================================================
+     공통 섹션
+     ===================================================== */
+  section{ padding: 4.5rem 0; }
+  section:nth-of-type(even){ background: var(--bg-alt); }
+
+  .eyebrow{
+    display:inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--primary-dark);
+    background: rgba(138,74,35,0.10);
+    border: 1px solid rgba(138,74,35,0.35);
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+  }
+  html[data-contrast="high"] .eyebrow{ background:#fff; border-color:#000; }
+
+  .section-heading{
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.1rem);
+    margin: 0 0 1rem;
+  }
+  .section-lede{
+    max-width: 42rem;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  /* =====================================================
+     자동 슬라이드 배너 (메뉴 소식): 신메뉴 · 시즌 음료 등 5개
+     ===================================================== */
+  .promo-banner{
+    margin-top: 2rem;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: 0 0.75rem 2rem rgba(42,36,32,0.10);
+  }
+  .promo-viewport{
+    position: relative;
+    /* 화면을 꽉 채우지 않도록 세로 길이를 적당히 제한 */
+    height: clamp(9.5rem, 20vw, 13rem);
+    overflow: hidden;
+  }
+  .promo-track{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  .promo-slide{
+    display:flex;
+    align-items:center;
+    gap: 1.25rem;
+    height: 100%;
+    padding: 1.25rem 1.75rem;
+    color: #FFFFFF;
+  }
+  /* display:flex가 [hidden]의 기본 display:none보다 우선 적용되는 것을 막기 위한 보정
+     (메뉴 카드·팝오버 목록에서 겪었던 문제를 여기서도 미리 방지) */
+  .promo-slide[hidden]{ display:none; }
+  @keyframes promoFadeIn{ from{ opacity:0; } to{ opacity:1; } }
+  .promo-slide:not([hidden]){ animation: promoFadeIn .5s ease; }
+
+  .promo-bg-1{ background: linear-gradient(135deg, #2A2420 0%, #3A322B 100%); }
+  .promo-bg-2{ background: linear-gradient(135deg, #5C1B14 0%, #79281D 100%); }
+  .promo-bg-3{ background: linear-gradient(135deg, #6B3819 0%, #8A4A23 100%); color: #FBF8F3; }
+  .promo-bg-4{ background: linear-gradient(135deg, #3A332C 0%, #4B4239 100%); }
+  .promo-bg-5{ background: linear-gradient(135deg, #33401F 0%, #465429 100%); }
+
+  .promo-icon{
+    flex: 0 0 auto;
+    width: 3.5rem;
+    height: 3.5rem;
+    opacity: 0.55;
+  }
+  .promo-content{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .promo-eyebrow{
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #FFD166;
+    margin: 0 0 0.35rem;
+  }
+  .promo-content h3{
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 0.9rem + 0.6vw, 1.35rem);
+    margin: 0 0 0.35rem;
+    color: inherit;
+  }
+  .promo-content p{
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: inherit;
+    opacity: 0.92;
+    max-width: 34rem;
+  }
+
+  @media (max-width: 34rem){
+    .promo-icon{ display:none; }
+  }
+
+  .promo-controls{
+    display:flex;
+    align-items:center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.1rem;
+    background: var(--bg-alt);
+    flex-wrap: wrap;
+  }
+  html[data-contrast="high"] .promo-controls{
+    border-top: 1px solid var(--border);
+  }
+
+  /* 이전/다음: 브랜드 컬러로 아웃라인만 두른 '고스트' 원형 버튼 */
+  .promo-nav-btn{
+    width: 2.5rem;
+    height: 2.5rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--primary-dark);
+    border-radius: 50%;
+    color: var(--primary-dark);
+    cursor: pointer;
+  }
+  .promo-nav-btn svg{ width: 1.2rem; height: 1.2rem; }
+  .promo-nav-btn:hover{
+    background: var(--primary-dark);
+    color: #FFFFFF;
+  }
+
+  /* 재생/정지: 꽉 채운 원형 프라이머리 버튼으로 시각적 우선순위를 준다 */
+  .promo-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap: 0.4rem;
+    height: 2.5rem;
+    padding: 0 1.1rem 0 0.85rem;
+    background: var(--primary-dark);
+    border: 1.5px solid var(--primary-dark);
+    border-radius: 999px;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: var(--font-body);
+  }
+  .promo-toggle:hover{ background: #52290f; border-color: #52290f; }
+  html[data-contrast="high"] .promo-toggle{ color: #000000; }
+  .promo-toggle-icon{ width: 1.05rem; height: 1.05rem; }
+  .promo-toggle-icon[hidden]{ display:none; }
+
+  /* 인디케이터: 점 대신, 재생 중엔 채워지는 '진행 바' 형태 (스토리형 캐러셀 패턴) */
+  .promo-dots{
+    display:flex;
+    align-items:center;
+    gap: 0.4rem;
+    margin-left: auto;
+  }
+  .promo-dot{
+    width: 2.1rem;
+    height: 1.5rem;
+    display:inline-flex;
+    align-items:center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .promo-dot-track{
+    position: relative;
+    display:block;
+    width: 100%;
+    height: 0.3rem;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #85643E; /* 미확정(대기) 구간: bg-alt 배경 대비 4.4:1 확보 (기존 3.2:1에서 여유폭 확대) */
+  }
+  .promo-dot-fill{
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    border-radius: 999px;
+    background: var(--primary-dark);
+  }
+  /* 이미 지나간 슬라이드: 꽉 채운 상태로 고정 (스토리 UI처럼 '본 만큼' 표시) */
+  .promo-dot.is-past .promo-dot-fill{ width: 100%; }
+  /* 현재 슬라이드: 트랙을 살짝 더 두껍게 해서 색 구분 없이도 인지 가능하게 함 */
+  .promo-dot[aria-current="true"] .promo-dot-track{ height: 0.4rem; }
+  .promo-dot[aria-current="true"]:not(.is-filling) .promo-dot-fill{ width: 100%; }
+  /* 재생 중인 현재 슬라이드: 다음 전환까지 남은 시간만큼 차오르는 애니메이션.
+     prefers-reduced-motion 환경에서는 전역 규칙이 애니메이션 지속시간을 강제로 0에 가깝게
+     만들어주므로 별도 분기 없이도 자동으로 정지 화면처럼 보인다. */
+  @keyframes promoDotFill{ from{ width:0%; } to{ width:100%; } }
+  .promo-dot[aria-current="true"].is-filling .promo-dot-fill{
+    width: 0%;
+    animation: promoDotFill 5s linear forwards;
+  }
+  html[data-contrast="high"] .promo-dot-track{ background: #4D4D4D; }
+
+  /* =====================================================
+     쇼츠 뷰어 (목업): 세로 9:16 카드 1장씩 보여주는 뷰어.
+     실제 영상 없이 일러스트 + 텍스트로 구성되어 있어 자동재생을 하지 않는다.
+     ===================================================== */
+  .shorts-viewer{
+    margin-top: 2rem;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    gap: 1rem;
+  }
+  .shorts-viewer:focus-visible{
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 6px;
+    border-radius: 1.25rem;
+  }
+  .shorts-frame{
+    width: 100%;
+    max-width: 20rem;
+    aspect-ratio: 9 / 16;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 0.75rem 2rem rgba(42,36,32,0.18);
+    position: relative;
+    background: #2A2420;
+  }
+  .shorts-track{
+    list-style:none;
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+  }
+  .shorts-card{
+    position: relative;
+    width:100%;
+    height:100%;
+  }
+  /* display 기본값이 [hidden]보다 우선 적용되는 문제를 막기 위한 명시 규칙 (프로젝트 공통 패턴) */
+  .shorts-card[hidden]{ display:none; }
+  .shorts-illust{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit: cover; /* video 태그에만 적용됨. 인라인 svg는 영향 없음 */
+  }
+  .shorts-scrim{
+    position:absolute;
+    inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,0.72) 100%);
+  }
+  .shorts-content{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    padding: 1.25rem 1.25rem 1.5rem;
+    color:#FFFFFF;
+  }
+  .shorts-badge{
+    display:inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #2A2420;
+    background: #FFD166;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.6rem;
+  }
+  .shorts-content h3{
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    margin: 0 0 0.4rem;
+    color: #FFFFFF;
+  }
+  .shorts-content p{
+    margin: 0 0 1rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: #F1E7D5;
+  }
+
+  /* 이전(위) · 재생/일시정지 · 다음(아래): 영상 프레임 위 정중앙에 세로로 고정 오버레이
+     (유튜브 쇼츠처럼 위/아래로 넘기는 방향과 아이콘이 일치하도록) */
+  .shorts-center-controls{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    gap: 1.1rem;
+    z-index: 3;
+    pointer-events: none; /* 빈 영역은 클릭이 영상/카드로 그대로 통과되도록 */
+  }
+  .shorts-center-controls > button{
+    pointer-events: auto; /* 버튼 자체는 클릭 가능 */
+  }
+  /* 유튜브 쇼츠 스타일: 테두리 없는 옅은 반투명 원, 얇은 흰색 아이콘만으로 존재감을 준다 */
+  .shorts-center-nav-btn{
+    width: 2.5rem;
+    height: 2.5rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0;
+    background: rgba(0,0,0,0.32);
+    border: none;
+    border-radius: 50%;
+    color: #FFFFFF;
+    cursor: pointer;
+  }
+  .shorts-center-nav-btn svg{ width: 1.35rem; height: 1.35rem; }
+  .shorts-center-nav-btn:hover{ background: rgba(0,0,0,0.5); }
+  .shorts-center-nav-btn:disabled{ opacity: 0.3; cursor: not-allowed; }
+  .shorts-center-nav-btn:disabled:hover{ background: rgba(0,0,0,0.32); }
+
+  .shorts-center-play-btn{
+    width: 3.75rem;
+    height: 3.75rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0;
+    background: rgba(0,0,0,0.4);
+    border: none;
+    border-radius: 50%;
+    color: #FFFFFF;
+    cursor: pointer;
+  }
+  .shorts-center-play-btn:hover{ background: rgba(0,0,0,0.55); }
+  .shorts-center-play-btn svg{ width: 1.7rem; height: 1.7rem; }
+
+  /* 음소거 전환 버튼: 영상 프레임 우상단 고정 */
+  .shorts-mute-btn{
+    position:absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0;
+    background: rgba(0,0,0,0.35);
+    border: none;
+    border-radius: 50%;
+    color: #FFFFFF;
+    cursor: pointer;
+    z-index: 4;
+  }
+  .shorts-mute-btn svg{ width: 1.15rem; height: 1.15rem; }
+  .shorts-mute-btn:hover{ background: rgba(0,0,0,0.5); }
+
+  /* 쇼츠 우측 하단 세로 액션 바 (좋아요 · 댓글 · 공유) */
+  .shorts-content{
+    padding-right: 4.2rem; /* 우측 액션 바와 캡션 텍스트가 겹치지 않도록 확보 */
+  }
+  .shorts-actions{
+    position:absolute;
+    right: 0.85rem;
+    bottom: 1.4rem;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    gap: 1rem;
+    z-index: 2;
+  }
+  .shorts-action-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 0.3rem;
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    color: #FFFFFF;
+    cursor: pointer;
+  }
+  .shorts-action-btn svg{
+    width: 1.7rem;
+    height: 1.7rem;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+  }
+  .shorts-action-count{
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  }
+  .shorts-like-btn.is-liked .shorts-like-icon{ color: #FF5A5F; }
+  .shorts-like-btn.is-liked .shorts-action-count{ color: #FF9A9D; }
+
+  /* 댓글 · 공유 모달 (배경 전체를 덮는 중앙 정렬 다이얼로그) */
+  .shorts-modal-backdrop{
+    position: fixed;
+    inset: 0;
+    background: rgba(20,16,12,0.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 1.5rem;
+    z-index: 200;
+  }
+  .shorts-modal-backdrop[hidden]{ display:none; }
+  .shorts-modal{
+    background: var(--surface);
+    border-radius: 1rem;
+    max-width: 24rem;
+    width:100%;
+    max-height: 80vh;
+    overflow-y:auto;
+    box-shadow: 0 1.5rem 3rem rgba(42,36,32,0.35);
+  }
+  .shorts-modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .shorts-modal-head h2{
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin:0;
+  }
+  .shorts-modal-close{
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    line-height:1;
+    padding: 0.35rem;
+    cursor: pointer;
+    color: var(--text);
+    border-radius: 0.4rem;
+  }
+  .shorts-modal-close:hover{ background: var(--bg-alt); }
+  .shorts-modal-body{ padding: 1.25rem; }
+  .shorts-modal-body p{ margin: 0 0 0.75rem; color: var(--text-muted); line-height:1.55; }
+  .shorts-share-options{
+    list-style:none;
+    margin: 0 0 1rem;
+    padding:0;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+  .shorts-share-option{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 0.4rem;
+    padding: 0.9rem 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--bg-alt);
+    font-size: 0.82rem;
+    font-family: var(--font-body);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .shorts-share-option:hover{ border-color: var(--primary-dark); }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 0.4rem;
+    text-decoration:none;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    cursor:pointer;
+    font-family: var(--font-body);
+  }
+  .btn-primary{
+    background: var(--primary-dark);
+    color: #fff;
+  }
+  .btn-primary:hover{ background: #52290f; }
+  .btn-outline{
+    background: transparent;
+    color: var(--primary-dark);
+    border-color: var(--primary-dark);
+  }
+  .btn-outline:hover{ background: rgba(138,74,35,0.1); }
+
+  /* =====================================================
+     히어로
+     ===================================================== */
+  .hero{
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+    background:
+      linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+  }
+  .hero .container{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem;
+    align-items:center;
+  }
+  @media (max-width: 56rem){
+    .hero .container{ grid-template-columns: 1fr; }
+  }
+  .hero h1{
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.1rem);
+    margin: 0 0 1rem;
+  }
+  .hero h1 .accent{ color: var(--primary-dark); }
+  .hero-desc{
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 34rem;
+    margin: 0 0 2rem;
+  }
+  .hero-actions{
+    display:flex;
+    gap:0.9rem;
+    flex-wrap: wrap;
+  }
+  .hero-figure{
+    margin:0;
+  }
+  .hero-figure figcaption{
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align:center;
+  }
+
+  .notice-bar{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.85rem 1.1rem;
+    margin-top: 2rem;
+    max-width: 34rem;
+    font-size: 0.95rem;
+  }
+  .notice-bar strong{ color: var(--primary-dark); }
+
+  /* =====================================================
+     스토리 / 특징 카드
+     ===================================================== */
+  .feature-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  @media (max-width: 56rem){
+    .feature-grid{ grid-template-columns: 1fr; }
+  }
+  .feature-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1.75rem;
+  }
+  .feature-card .gauge{ margin-bottom: 1rem; }
+  .feature-card h3{
+    font-size: 1.15rem;
+    margin: 0 0 0.6rem;
+  }
+  .feature-card p{
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.98rem;
+  }
+
+  /* =====================================================
+     메뉴
+     ===================================================== */
+  .menu-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    list-style: none;
+    padding: 0;
+  }
+  @media (max-width: 64rem){
+    .menu-grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 32rem){
+    .menu-grid{ grid-template-columns: 1fr; }
+  }
+  .menu-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  /* display:flex가 [hidden]의 기본 display:none보다 우선 적용되는 것을 막기 위한 보정 */
+  .menu-card[hidden]{
+    display: none;
+  }
+  .menu-card .thumb{
+    aspect-ratio: 4/3;
+    display:block;
+  }
+  .menu-card .body{
+    padding: 1.25rem;
+    display:flex;
+    flex-direction:column;
+    gap:0.5rem;
+    flex:1;
+  }
+  .menu-card h3{
+    font-size: 1.05rem;
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .badge{
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    border: 1px solid var(--primary-dark);
+    border-radius: 999px;
+    padding: 0.12rem 0.55rem;
+  }
+  .menu-card p{
+    margin:0;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    flex:1;
+  }
+  .price{
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1rem;
+  }
+
+  /* 카드 상단: 메뉴명 + 찜하기 버튼 */
+  .card-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .card-head h3{ flex: 1; }
+
+  /* 찜하기: 테두리를 없앤 미니멀한 '고스트' 아이콘 버튼 + 하트 채움/팝 애니메이션 (최신 트렌드) */
+  .wish-btn{
+    flex: 0 0 auto;
+    width: 2.25rem;
+    height: 2.25rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: background-color .15s ease, color .15s ease;
+  }
+  .wish-btn:hover{ background: var(--bg-alt); color: var(--focus-ring); }
+  /* 찜 완료 상태: 색뿐 아니라 하트가 실제로 채워지는 것으로도 구분 (아이콘 자체가 다른 모양이 됨) */
+  .wish-btn[aria-pressed="true"]{ color: var(--focus-ring); }
+  .wish-btn[aria-pressed="true"]:hover{ background: rgba(178,58,30,0.1); }
+
+  .wish-icon-svg{
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    transition: transform .2s ease;
+  }
+  .wish-btn[aria-pressed="true"] .wish-icon-svg{ fill: currentColor; }
+  /* 누르는 순간 하트가 살짝 튀어오르는 애니메이션. prefers-reduced-motion 환경에서는
+     전역 규칙이 애니메이션 지속시간을 강제로 0에 가깝게 만들어 자동으로 비활성화된다. */
+  @keyframes wishPop{
+    0%{ transform: scale(1); }
+    35%{ transform: scale(1.35); }
+    60%{ transform: scale(0.92); }
+    100%{ transform: scale(1); }
+  }
+  .wish-btn.is-popping .wish-icon-svg{ animation: wishPop .4s ease; }
+
+  /* 수량 조절 + 장바구니 담기 */
+  .order-controls{
+    margin-top: 0.35rem;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .qty-stepper{
+    display:inline-flex;
+    align-items:center;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 999px;
+    overflow:hidden;
+  }
+  .qty-btn{
+    width: 2rem;
+    height: 2rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background: var(--bg);
+    border: none;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .qty-btn:hover:not(:disabled){ background: var(--bg-alt); }
+  .qty-btn:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  /* aria-disabled는 네이티브 disabled와 달리 포커스를 계속 받을 수 있어야 하므로
+     (장바구니 패널에서 수량이 1이 됐을 때도 포커스를 잃지 않아야 한다), 시각적 스타일만
+     별도로 지정한다. 클릭을 막는 실제 동작은 JS 쪽 가드(if(entry.qty > 1))가 담당한다. */
+  .qty-btn[aria-disabled="true"]{
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .qty-btn[aria-disabled="true"]:hover{ background: var(--bg); }
+  .qty-value{
+    min-width: 2rem;
+    text-align:center;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .btn-cart{
+    padding: 0.55rem 1rem;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  /* 장바구니 · 찜 요약 바 */
+  .order-summary{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 1.5rem 0 0;
+    padding: 0.9rem 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .order-summary span[role="status"]{
+    display:inline-flex;
+    align-items:center;
+    gap: 0.4rem;
+  }
+  .order-summary{
+    align-items: center;
+  }
+  .btn-sm{
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .menu-note{
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .cart-empty-cta{
+    margin-top: 1rem;
+  }
+
+  /* =====================================================
+     장바구니 상세 표
+     ===================================================== */
+  .cart-table-wrap{
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+  table.cart-table{
+    width:100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    min-width: 34rem;
+  }
+  table.cart-table caption{
+    text-align:left;
+    font-weight:700;
+    padding-bottom: 0.75rem;
+    color: var(--text);
+  }
+  table.cart-table th,
+  table.cart-table td{
+    text-align:left;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+    vertical-align: middle;
+  }
+  table.cart-table thead th{
+    background: var(--bg-alt);
+    font-weight: 700;
+  }
+  table.cart-table tbody th{
+    font-weight: 600;
+  }
+  table.cart-table tfoot th,
+  table.cart-table tfoot td{
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 1rem;
+    background: var(--bg-alt);
+  }
+  .cart-remove-btn{
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    background: transparent;
+    color: var(--focus-ring);
+    border: 1.5px solid var(--focus-ring);
+    border-radius: 0.4rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .cart-remove-btn:hover{ background: rgba(178,58,30,0.08); }
+
+  /* =====================================================
+     메뉴 카테고리 드롭다운 (2단계: 대분류 → 소분류)
+     ===================================================== */
+  .menu-filter{
+    margin-top: 2rem;
+    background: var(--surface);
+  }
+  .filter-row{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+  .select-group{
+    display:flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 13rem;
+  }
+  .select-group label{
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .select-group select{
+    font: inherit;
+    padding: 0.65rem 0.8rem;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 0.4rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  .select-group select:disabled{
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .filter-status{
+    margin: 1rem 0 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+  .search-group{
+    min-width: 0;
+  }
+  .spacer-label{
+    display:block;
+    height: 1.4rem; /* label과 같은 높이를 확보해 검색 버튼을 셀렉트와 같은 줄에 맞춘다 */
+  }
+  .btn-search{
+    padding: 0.65rem 1.3rem;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  /* =====================================================
+     공간 갤러리
+     ===================================================== */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  @media (max-width: 56rem){
+    .gallery-grid{ grid-template-columns: 1fr; }
+  }
+  .gallery-grid figure{ margin:0; }
+  .gallery-grid figcaption{
+    margin-top: 0.75rem;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .gallery-grid figcaption strong{
+    display:block;
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  /* =====================================================
+     운영시간 / 오시는 길
+     ===================================================== */
+  .hours-wrap{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem;
+    margin-top: 2.5rem;
+    align-items:start;
+  }
+  @media (max-width: 56rem){
+    .hours-wrap{ grid-template-columns: 1fr; }
+  }
+  table.hours-table{
+    width:100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  table.hours-table caption{
+    text-align:left;
+    font-weight:700;
+    padding-bottom: 0.75rem;
+    color: var(--text);
+  }
+  table.hours-table th,
+  table.hours-table td{
+    text-align:left;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.98rem;
+  }
+  table.hours-table thead th{
+    background: var(--bg-alt);
+    font-weight: 700;
+  }
+  table.hours-table tbody th{
+    font-weight: 600;
+    width: 8rem;
+  }
+  table.hours-table tbody tr:last-child th,
+  table.hours-table tbody tr:last-child td{ border-bottom:none; }
+  .closed-day td{ color: var(--text-muted); }
+  .closed-day .tag-closed{
+    font-weight:700;
+    color: var(--primary-dark);
+  }
+
+  address{
+    font-style: normal;
+    margin: 1.25rem 0;
+    line-height: 1.9;
+  }
+
+  .map-fallback{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1.25rem;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+
+  .icon-link{
+    display:inline-flex;
+    align-items:center;
+    gap: 0.4rem;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  /* =====================================================
+     소식 게시판: 표 + 페이지네이션 (일반적인 홈페이지 공지사항 형태)
+     알림 벨의 소식 항목과 같은 데이터(JS의 notices 배열)를 공유한다.
+     ===================================================== */
+  .notice-table{
+    width:100%;
+    max-width: 48rem;
+    margin-top: 1.5rem;
+    border-collapse: collapse;
+  }
+  .notice-table th,
+  .notice-table td{
+    padding: 0.85rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .notice-table thead th{
+    border-bottom: 2px solid var(--border-strong);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+  }
+  .notice-col-no{ width: 4rem; color: var(--text-muted); }
+  .notice-col-date{ width: 8rem; color: var(--text-muted); white-space: nowrap; }
+  .notice-title-btn{
+    background: none;
+    border: none;
+    padding: 0.2rem 0;
+    font: inherit;
+    font-weight: 700;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+  }
+  .notice-title-btn:hover{ text-decoration-color: currentColor; }
+
+  .pagination{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+  .pagination-btn{
+    width: 2.1rem;
+    height: 2.1rem;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 0.4rem;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .pagination-btn svg{ width: 1rem; height: 1rem; }
+  .pagination-btn:hover{ background: var(--bg-alt); }
+  .pagination-btn:disabled{ opacity: 0.4; cursor: not-allowed; }
+  .pagination-btn:disabled:hover{ background: var(--surface); }
+
+  .pagination-pages{ display:flex; align-items:center; gap: 0.35rem; }
+  .pagination-page-btn{
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 0.4rem;
+    color: var(--text);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .pagination-page-btn:hover{ border-color: var(--primary-dark); }
+  .pagination-page-btn[aria-current="page"]{
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #FFFFFF;
+  }
+
+  /* 상세 화면: 목록과 같은 자리에서 전환된다 */
+  .notice-detail{
+    max-width: 42rem;
+    margin-top: 1.5rem;
+  }
+  .notice-detail:focus{
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+  .notice-detail-date{
+    margin: 1.25rem 0 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .notice-detail-title{
+    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+  }
+  .notice-detail-body{
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .notice-divider{
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+    max-width: 42rem;
+  }
+
+  /* =====================================================
+     뉴스레터 폼
+     ===================================================== */
+  .form-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 2.25rem;
+    max-width: 38rem;
+    margin: 2.5rem auto 0;
+  }
+  .form-row{ margin-bottom: 1.4rem; }
+  .form-row label{
+    display:block;
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+  }
+  .required-mark{
+    color: var(--primary-dark);
+    font-weight: 700;
+  }
+  .hint{
+    display:block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+  }
+  input[type="text"],
+  input[type="email"]{
+    width:100%;
+    font: inherit;
+    padding: 0.7rem 0.85rem;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 0.4rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  /* 브라우저 기본 placeholder는 저채도 회색이라 명도 대비가 3:1을 못 넘기는 경우가 많아,
+     기존 --text-muted 토큰으로 명시 지정한다 (라이트: 7.48:1, 고대비 모드: 18.76:1 확보) */
+  input[type="text"]::placeholder,
+  input[type="email"]::placeholder{
+    color: var(--text-muted);
+    opacity: 1; /* 파이어폭스는 기본적으로 placeholder에 opacity를 적용해 대비를 낮추므로 명시적으로 해제 */
+  }
+  input[aria-invalid="true"]{
+    border-color: var(--focus-ring);
+    background: #FCEDE9;
+  }
+  html[data-contrast="high"] input[aria-invalid="true"]{ background:#fff; }
+  .error-text{
+    display:flex;
+    gap: 0.4rem;
+    align-items:flex-start;
+    color: var(--focus-ring);
+    font-size: 0.9rem;
+    margin-top: 0.4rem;
+    font-weight: 700;
+  }
+  fieldset{
+    border: 1.5px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem 1.1rem 1.2rem;
+    margin: 0 0 1.4rem;
+  }
+  fieldset legend{
+    font-weight: 700;
+    padding: 0 0.4rem;
+  }
+  .checkbox-row{
+    display:flex;
+    align-items:flex-start;
+    gap: 0.55rem;
+    margin-top: 0.6rem;
+  }
+  .checkbox-row:first-of-type{ margin-top: 0.3rem; }
+  .checkbox-row input{ margin-top: 0.3rem; width:1.1rem; height:1.1rem; }
+  .checkbox-row label{ font-weight: 400; }
+
+  .form-status{
+    border-radius: 0.5rem;
+    padding: 0.9rem 1rem;
+    margin-top: 1rem;
+    font-weight: 700;
+    display:none;
+  }
+  .form-status.is-visible{ display:block; }
+  .form-status.success{
+    background: rgba(75,93,58,0.12);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .form-status.error{
+    background: rgba(178,58,30,0.1);
+    color: var(--focus-ring);
+    border: 1px solid var(--focus-ring);
+  }
+
+  /* =====================================================
+     푸터
+     ===================================================== */
+  .site-footer{
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 3.5rem 0 2.25rem;
+    /* 어두운 배경 위 기본 포커스 색(--focus-ring)은 대비가 낮아(2.6:1) 잘 안 보이므로
+       이 영역 안에서만 밝은 흰색으로 재지정 (자식 요소가 상속받아 사용) */
+    --focus-ring: #FFFFFF;
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 2.5rem;
+  }
+  @media (max-width: 48rem){
+    .footer-grid{ grid-template-columns: 1fr; }
+  }
+  .site-footer h2{
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    margin: 0 0 0.75rem;
+    color: var(--footer-text);
+  }
+  .site-footer h3{
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+    color: var(--footer-text-muted);
+    margin: 0 0 0.9rem;
+  }
+  .site-footer p, .site-footer address{
+    color: var(--footer-text-muted);
+    font-size: 0.92rem;
+    margin: 0 0 0.5rem;
+  }
+  .sns-list{
+    list-style:none;
+    padding:0; margin: 0 0 1.25rem;
+    display:flex;
+    gap: 0.75rem;
+  }
+  .sns-list a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width: 2.5rem; height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--footer-text-muted);
+    color: var(--footer-text);
+    text-decoration:none;
+  }
+  .sns-list a:hover{ background: rgba(255,255,255,0.12); }
+  .footer-links{ list-style:none; padding:0; margin:0; }
+  .footer-links li{ margin-bottom: 0.55rem; }
+  .footer-links a,
+  .footer-link-btn{
+    color: var(--footer-text);
+    text-decoration:none;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+  }
+  .footer-links a:hover,
+  .footer-link-btn:hover{ text-decoration: underline; }
+  .footer-bottom{
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--footer-text-muted);
+  }
+
+  @media (max-width: 34rem){
+    section{ padding: 3rem 0; }
+    .form-card{ padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 페이지 진입 시 여기에 조용히 초점을 둔다 (화면에 아무것도 보이지 않고, 스크린리더에도
+     읽을 내용이 없음). 이렇게 하면 첫 Tab을 눌렀을 때 다음 초점 대상인 "본문 바로가기"가
+     항상 확실하게, 눈에 보이는 상태로 나타난다. -->
+<div id="initial-focus-target" tabindex="-1"></div>
+
+<!-- 건너뛰기 링크: 반복 영역(헤더/내비게이션)을 건너뛰고 본문으로 바로 이동 -->
+<a class="skip-link" href="#main-content">본문 바로가기</a>
+<a class="skip-link" href="#primary-nav">주 메뉴 바로가기</a>
+
+<header class="site-header">
+  <div class="util-bar">
+    <div class="container">
+      <span id="text-size-label" class="sr-only">글자 크기 조절</span>
+      <button type="button" class="util-btn" id="font-decrease" aria-describedby="text-size-label">
+        <span aria-hidden="true">가−</span><span class="sr-only">글자 작게</span>
+      </button>
+      <!-- 글자 크기 상태: 화면에 보이는 동시에 aria-live="polite"로 변경 사항을 즉시 안내 -->
+      <span id="font-size-status" class="util-status" role="status" aria-live="polite">글자 크기 100%</span>
+      <button type="button" class="util-btn" id="font-increase" aria-describedby="text-size-label">
+        <span aria-hidden="true">가+</span><span class="sr-only">글자 크게</span>
+      </button>
+      <button type="button" class="util-btn" id="font-reset">
+        글자 크기 초기화
+      </button>
+      <button type="button" class="util-btn" id="contrast-toggle" aria-pressed="false">
+        고대비 모드
+      </button>
+    </div>
+  </div>
+
+  <div class="container header-inner">
+    <button type="button" class="logo logo-btn" data-tab-target="home" aria-label="오후정미소, 홈 화면으로 이동">
+      오후정미소 <span class="logo-sub">Ohu Jeongmiso</span>
+    </button>
+
+    <nav id="primary-nav" class="primary-nav" aria-label="주 메뉴" tabindex="-1">
+      <div class="tablist" role="tablist" aria-label="오후정미소 주요 화면">
+        <button type="button" role="tab" id="tab-home" class="tab" aria-selected="true" aria-controls="panel-home" tabindex="0">홈</button>
+        <button type="button" role="tab" id="tab-shorts" class="tab" aria-selected="false" aria-controls="panel-shorts" tabindex="-1">쇼츠</button>
+        <button type="button" role="tab" id="tab-menu" class="tab" aria-selected="false" aria-controls="panel-menu" tabindex="-1">메뉴</button>
+        <button type="button" role="tab" id="tab-space" class="tab" aria-selected="false" aria-controls="panel-space" tabindex="-1">공간 소개</button>
+        <button type="button" role="tab" id="tab-visit" class="tab" aria-selected="false" aria-controls="panel-visit" tabindex="-1">오시는 길</button>
+        <button type="button" role="tab" id="tab-newsletter" class="tab" aria-selected="false" aria-controls="panel-newsletter" tabindex="-1">소식</button>
+      </div>
+    </nav>
+
+    <!-- 알림 / MY / 장바구니: 각각 버튼을 누르면 아래로 펼쳐지는 모달 패널(팝오버). 열리면 배경이 inert 처리되고 포커스가 패널 안에 갇힌다 -->
+    <div class="header-icons">
+      <div class="popover-wrap">
+        <button type="button" id="notif-trigger" class="icon-btn" aria-haspopup="true" aria-expanded="false" aria-controls="notif-panel" aria-label="알림, 새로운 알림 있음">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3a5 5 0 0 0-5 5v3.3c0 .86-.34 1.68-.95 2.29L4.6 15c-.86.86-.25 2.33.96 2.33h12.88c1.21 0 1.82-1.47.96-2.33l-1.45-1.41A3.24 3.24 0 0 1 17 11.3V8a5 5 0 0 0-5-5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <path d="M9.5 19.5a2.5 2.5 0 0 0 5 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          <span class="icon-dot" id="notif-dot" aria-hidden="true"></span>
+        </button>
+        <div id="notif-panel" class="popover-panel" role="dialog" aria-modal="true" aria-label="알림" hidden>
+          <div class="popover-head">
+            <h2 class="popover-title">알림</h2>
+            <button type="button" class="popover-close" data-popover-close aria-label="알림 패널 닫기">✕</button>
+          </div>
+          <ul class="popover-list" id="notif-list">
+            <!-- JS가 채웁니다: 항목마다 읽음/안 읽음 상태(점 + 스크린리더 안내 문구)를 함께 표시 -->
+          </ul>
+        </div>
+      </div>
+
+      <div class="popover-wrap">
+        <button type="button" id="my-trigger" class="icon-btn" aria-haspopup="true" aria-expanded="false" aria-controls="my-panel" aria-label="MY">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="8.2" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M5 19.5c1.15-3.4 3.9-5.2 7-5.2s5.85 1.8 7 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div id="my-panel" class="popover-panel" role="dialog" aria-modal="true" aria-label="MY" hidden>
+          <div class="popover-head">
+            <h2 class="popover-title">MY</h2>
+            <button type="button" class="popover-close" data-popover-close aria-label="MY 패널 닫기">✕</button>
+          </div>
+          <p class="popover-note">로그인하면 주문 내역과 혜택을 확인할 수 있어요.</p>
+
+          <ul class="popover-list my-actions">
+            <li>
+              <button type="button" class="my-action-btn" id="my-profile-btn">
+                <span>프로필 설정</span>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </li>
+            <li>
+              <a class="my-action-btn" id="my-login-btn" href="login.html">
+                <span>로그인</span>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+            </li>
+            <li>
+              <button type="button" class="my-action-btn" id="my-wish-shortcut-btn" data-tab-target="menu" data-popover-close>
+                <span>찜한 메뉴 바로가기</span>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </li>
+          </ul>
+
+          <p id="my-action-status" class="popover-empty" role="status" aria-live="polite"></p>
+
+          <div class="popover-my-wish">
+            <h3>찜한 메뉴 <span id="my-wish-count">0</span>개</h3>
+            <ul id="my-wish-list" class="popover-list"></ul>
+            <p id="my-wish-empty" class="popover-empty">아직 찜한 메뉴가 없습니다. 메뉴에서 하트 버튼을 눌러보세요.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="popover-wrap">
+        <button type="button" id="cart-trigger" class="icon-btn" aria-haspopup="true" aria-expanded="false" aria-controls="cart-panel" aria-label="장바구니, 0개의 상품이 담겨있음">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20.5 8H6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="10" cy="20.4" r="1.3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="17" cy="20.4" r="1.3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span class="icon-badge" id="cart-icon-badge" aria-hidden="true">0</span>
+        </button>
+        <div id="cart-panel" class="popover-panel popover-panel-wide" role="dialog" aria-modal="true" aria-label="장바구니" hidden>
+          <div class="popover-head">
+            <h2 class="popover-title">장바구니</h2>
+            <button type="button" class="popover-close" data-popover-close aria-label="장바구니 패널 닫기">✕</button>
+          </div>
+
+          <!-- 개별 조작(수량 변경·삭제)에 대한 구체적인 안내 -->
+          <p id="cart-panel-status" class="sr-only" role="status" aria-live="polite"></p>
+
+          <p id="cart-empty-message" class="popover-empty">
+            장바구니가 비어 있습니다. 메뉴에서 원하는 항목을 담아보세요.
+            <br>
+            <button type="button" class="btn btn-outline cart-empty-cta" data-tab-target="menu" data-popover-close>메뉴 보러 가기</button>
+          </p>
+
+          <div id="cart-table-wrap" class="cart-table-wrap" hidden>
+            <table class="cart-table">
+              <caption>장바구니에 담은 메뉴 목록</caption>
+              <thead>
+                <tr>
+                  <th scope="col">메뉴</th>
+                  <th scope="col">수량</th>
+                  <th scope="col">단가</th>
+                  <th scope="col">소계</th>
+                  <th scope="col"><span class="sr-only">삭제</span></th>
+                </tr>
+              </thead>
+              <tbody id="cart-table-body"></tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row" colspan="3">합계</th>
+                  <td id="cart-total-cell">0원</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main-content" tabindex="-1">
+
+  <!-- ================= 홈 (히어로 + 스토리) ================= -->
+  <section id="panel-home" class="hero" role="tabpanel" aria-labelledby="tab-home" tabindex="0">
+    <div class="container">
+      <div>
+        <p class="eyebrow">경기도 양평 · 1978년 정미소를 고쳐 쓴 카페</p>
+        <h1 id="hero-heading">쌀을 찧던 자리에서,<br><span class="accent">오후의 커피</span>를 내립니다</h1>
+        <p class="hero-desc">
+          오후정미소는 40여 년간 마을의 쌀을 찧던 정미소 건물을 그대로 살려 만든 카페입니다.
+          도정기와 나무 서까래, 두꺼운 흙벽은 그대로 두고, 그 안에 로스팅한 커피와 곡물 디저트를 채웠습니다.
+        </p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary" data-tab-target="menu">메뉴 보러 가기</button>
+          <button type="button" class="btn btn-outline" data-tab-target="visit">찾아오는 길 안내</button>
+        </div>
+
+        <div class="notice-bar" role="note">
+          <span aria-hidden="true">📌</span>
+          <span><strong>안내.</strong> 정미소 원형 보존을 위해 매장 내 삼각대·플래시 촬영은 삼가 주세요.</span>
+        </div>
+      </div>
+
+      <figure class="hero-figure">
+        <svg viewBox="0 0 480 380" role="img" aria-labelledby="hero-img-title hero-img-desc" xmlns="http://www.w3.org/2000/svg">
+          <title id="hero-img-title">오후정미소 외관 일러스트</title>
+          <desc id="hero-img-desc">낮은 박공지붕과 붉은 벽돌 굴뚝이 남아있는 옛 정미소 건물 외관. 앞마당에는 자갈길과 나무 벤치가 있다.</desc>
+          <rect width="480" height="380" rx="18" fill="#F1E7D5"/>
+          <rect x="60" y="150" width="360" height="170" fill="#E4D3B5" stroke="#B9A183" stroke-width="3"/>
+          <polygon points="60,150 240,60 420,150" fill="#8A4A23"/>
+          <rect x="150" y="210" width="70" height="110" fill="#6B3819"/>
+          <rect x="260" y="200" width="50" height="60" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+          <rect x="330" y="200" width="50" height="60" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+          <rect x="380" y="90" width="26" height="80" fill="#8A4A23"/>
+          <rect x="374" y="80" width="38" height="18" fill="#6B3819"/>
+          <circle cx="240" cy="112" r="14" fill="#F1E7D5" stroke="#4B5D3A" stroke-width="4"/>
+          <line x1="30" y1="320" x2="450" y2="320" stroke="#B9A183" stroke-width="3"/>
+          <circle cx="90" cy="330" r="6" fill="#B9A183"/>
+          <circle cx="115" cy="333" r="5" fill="#B9A183"/>
+          <circle cx="70" cy="336" r="4" fill="#B9A183"/>
+        </svg>
+        <figcaption>1978년 준공 당시의 박공지붕과 굴뚝을 그대로 남긴 오후정미소 외관</figcaption>
+      </figure>
+    </div>
+
+    <div class="container">
+      <p class="eyebrow">STORY</p>
+      <h2 id="story-heading" class="section-heading">정미소의 시간을 잇다</h2>
+      <p class="section-lede">
+        철거 직전이던 정미소를 3년에 걸쳐 고쳤습니다. 새로 짓지 않고, 있던 것을 최대한 남기는 방식을 택했습니다.
+        지금도 매장 곳곳에서 예전 정미소의 흔적을 만날 수 있습니다.
+      </p>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <svg class="gauge" width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="#8A4A23" stroke-width="4"/>
+            <line x1="24" y1="24" x2="24" y2="9" stroke="#8A4A23" stroke-width="3" stroke-linecap="round"/>
+            <line x1="24" y1="24" x2="34" y2="30" stroke="#4B5D3A" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <h3>도정기 원형 보존</h3>
+          <p>1970년대 도정기 두 대를 철거하지 않고 홀 중앙에 남겨, 카페 안에서 정미소의 구조를 그대로 느낄 수 있게 했습니다.</p>
+        </article>
+
+        <article class="feature-card">
+          <svg class="gauge" width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <rect x="10" y="10" width="28" height="28" fill="none" stroke="#8A4A23" stroke-width="4"/>
+            <line x1="10" y1="24" x2="38" y2="24" stroke="#4B5D3A" stroke-width="3"/>
+            <line x1="24" y1="10" x2="24" y2="38" stroke="#4B5D3A" stroke-width="3"/>
+          </svg>
+          <h3>낮은 채광창</h3>
+          <p>곡물을 말리던 서쪽 벽 낮은 창을 그대로 살려, 오후가 되면 볕이 좌석 깊숙이 들어옵니다.</p>
+        </article>
+
+        <article class="feature-card">
+          <svg class="gauge" width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path d="M14 14 h20 v20 h-20 z" fill="none" stroke="#8A4A23" stroke-width="4"/>
+            <path d="M14 22 h20 M22 14 v20" stroke="#4B5D3A" stroke-width="2"/>
+          </svg>
+          <h3>곡물 마대 텍스처</h3>
+          <p>실제로 쌀을 담던 마대와 됫박을 조명 갓과 트레이로 다시 사용해, 공간 곳곳에 정미소의 질감을 남겼습니다.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 쇼츠 (목업: 실제 영상 없이 일러스트 + 텍스트로 구성) ================= -->
+  <section id="panel-shorts" role="tabpanel" aria-labelledby="tab-shorts" tabindex="0" hidden>
+    <div class="container">
+      <p class="eyebrow">SHORTS</p>
+      <h2 id="shorts-heading" class="section-heading">오후정미소 쇼츠</h2>
+      <p class="section-lede">
+        15초 안에 담은 정미소의 오늘. 영상 중앙의 버튼이나 키보드 방향키로 넘겨보세요.
+        <br><span class="hint">※ 지금 나오는 영상은 모두 샘플용 더미 영상입니다. 실제 영상은 곧 순서대로 교체될 예정입니다.</span>
+      </p>
+
+      <div class="shorts-viewer" id="shorts-viewer" tabindex="0" role="group" aria-roledescription="쇼츠 뷰어" aria-label="오후정미소 쇼츠 목록, 방향키로 이동 가능">
+        <div class="shorts-frame">
+          <!-- 이전(위)/재생·일시정지/다음(아래): 영상 위 중앙에 세로로 고정 오버레이 (유튜브 쇼츠 스타일) -->
+          <div class="shorts-center-controls">
+            <button type="button" class="shorts-center-nav-btn" id="shorts-prev" aria-label="이전 쇼츠 보기">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+
+            <button type="button" class="shorts-center-play-btn" id="shorts-play-toggle" data-shorts-play>
+              <svg class="shorts-play-pause-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7V5Z" fill="currentColor"/></svg>
+              <span class="sr-only shorts-play-label">재생</span>
+            </button>
+
+            <button type="button" class="shorts-center-nav-btn" id="shorts-next" aria-label="다음 쇼츠 보기">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <!-- 음소거 전환 버튼: 라벨은 "음소거"로 고정하고, aria-pressed로만 켜짐/꺼짐 상태를 전달한다 -->
+          <button type="button" class="shorts-mute-btn" id="shorts-mute-toggle" aria-pressed="false">
+            <svg class="shorts-mute-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4Z" fill="currentColor"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="sr-only">음소거</span>
+          </button>
+
+          <ul class="shorts-track" id="shorts-track">
+
+            <li class="shorts-card shorts-bg-1" data-index="0" data-video-id="shorts-video-1" aria-label="도정기, 진짜 움직여요">
+              <video class="shorts-illust" id="shorts-video-1"
+                     src="assets/shorts-sample-1.mp4"
+                     poster="assets/shorts-sample-1-poster.jpg"
+                     muted loop playsinline preload="metadata"
+                     aria-hidden="true" tabindex="-1"></video>
+              <div class="shorts-scrim"></div>
+              <div class="shorts-content">
+                <span class="shorts-badge">NEW</span>
+                <h3>도정기, 진짜 움직여요</h3>
+                <p>1970년대 도정기가 실제로 돌아가는 모습, 15초로 담았습니다. (더미 샘플 영상, 소리 없음)</p>
+              </div>
+              <div class="shorts-actions">
+                <button type="button" class="shorts-action-btn shorts-like-btn" data-shorts-like aria-pressed="false" aria-label="좋아요, 128개">
+                  <svg class="shorts-like-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.4 2 5 5.4 5c2 0 3.4 1.1 4.1 2.3.7-1.2 2.1-2.3 4.1-2.3 3.4 0 5 3.4 3.4 6.9C19.5 16.4 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">128</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-comment aria-haspopup="dialog" aria-label="댓글 보기, 12개">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M21 12c0 4.4-4 8-9 8-1 0-2-.1-3-.4L4 21l1.5-4C4.6 15.6 3 13.9 3 12c0-4.4 4-8 9-8s9 3.6 9 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">12</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-share aria-haspopup="dialog" aria-label="공유하기">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="10.8" x2="15.9" y2="7.2" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="13.2" x2="15.9" y2="16.8" stroke="currentColor" stroke-width="2"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">공유</span>
+                </button>
+              </div>
+            </li>
+
+            <li class="shorts-card shorts-bg-2" data-index="1" data-video-id="shorts-video-2" aria-label="흑임자라떼 만드는 15초" hidden>
+              <video class="shorts-illust" id="shorts-video-2"
+                     src="assets/shorts-sample-2.mp4"
+                     poster="assets/shorts-sample-2-poster.jpg"
+                     loop playsinline preload="metadata"
+                     aria-hidden="true" tabindex="-1"></video>
+              <div class="shorts-scrim"></div>
+              <div class="shorts-content">
+                <span class="shorts-badge">NEW MENU</span>
+                <h3>흑임자라떼 만드는 15초</h3>
+                <p>고소한 흑임자를 갈아 넣는 신메뉴 제조 과정을 짧게 보여드려요. (더미 샘플 영상, 소리 포함)</p>
+              </div>
+              <div class="shorts-actions">
+                <button type="button" class="shorts-action-btn shorts-like-btn" data-shorts-like aria-pressed="false" aria-label="좋아요, 342개">
+                  <svg class="shorts-like-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.4 2 5 5.4 5c2 0 3.4 1.1 4.1 2.3.7-1.2 2.1-2.3 4.1-2.3 3.4 0 5 3.4 3.4 6.9C19.5 16.4 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">342</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-comment aria-haspopup="dialog" aria-label="댓글 보기, 27개">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M21 12c0 4.4-4 8-9 8-1 0-2-.1-3-.4L4 21l1.5-4C4.6 15.6 3 13.9 3 12c0-4.4 4-8 9-8s9 3.6 9 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">27</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-share aria-haspopup="dialog" aria-label="공유하기">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="10.8" x2="15.9" y2="7.2" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="13.2" x2="15.9" y2="16.8" stroke="currentColor" stroke-width="2"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">공유</span>
+                </button>
+              </div>
+            </li>
+
+            <li class="shorts-card shorts-bg-3" data-index="2" data-video-id="shorts-video-3" aria-label="다락방 자리, 오후 햇살" hidden>
+              <video class="shorts-illust" id="shorts-video-3"
+                     src="assets/shorts-sample-3.mp4"
+                     poster="assets/shorts-sample-3-poster.jpg"
+                     loop playsinline preload="metadata"
+                     aria-hidden="true" tabindex="-1"></video>
+              <div class="shorts-scrim"></div>
+              <div class="shorts-content">
+                <span class="shorts-badge">SPACE</span>
+                <h3>다락방 자리, 오후 햇살</h3>
+                <p>낮은 채광창으로 볕이 깊게 들어오는 2층 다락 좌석을 소개합니다. (더미 샘플 영상, 소리 포함)</p>
+              </div>
+              <div class="shorts-actions">
+                <button type="button" class="shorts-action-btn shorts-like-btn" data-shorts-like aria-pressed="false" aria-label="좋아요, 56개">
+                  <svg class="shorts-like-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.4 2 5 5.4 5c2 0 3.4 1.1 4.1 2.3.7-1.2 2.1-2.3 4.1-2.3 3.4 0 5 3.4 3.4 6.9C19.5 16.4 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">56</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-comment aria-haspopup="dialog" aria-label="댓글 보기, 8개">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M21 12c0 4.4-4 8-9 8-1 0-2-.1-3-.4L4 21l1.5-4C4.6 15.6 3 13.9 3 12c0-4.4 4-8 9-8s9 3.6 9 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">8</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-share aria-haspopup="dialog" aria-label="공유하기">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="10.8" x2="15.9" y2="7.2" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="13.2" x2="15.9" y2="16.8" stroke="currentColor" stroke-width="2"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">공유</span>
+                </button>
+              </div>
+            </li>
+
+            <li class="shorts-card shorts-bg-4" data-index="3" data-video-id="shorts-video-4" aria-label="감나무 아래 반려동물 동반석" hidden>
+              <video class="shorts-illust" id="shorts-video-4"
+                     src="assets/shorts-sample-4.mp4"
+                     poster="assets/shorts-sample-4-poster.jpg"
+                     loop playsinline preload="metadata"
+                     aria-hidden="true" tabindex="-1"></video>
+              <div class="shorts-scrim"></div>
+              <div class="shorts-content">
+                <span class="shorts-badge">PET FRIENDLY</span>
+                <h3>감나무 아래 반려동물 동반석</h3>
+                <p>뒷마당 평상 좌석, 반려동물과 함께 오후 볕을 즐겨보세요. (더미 샘플 영상, 소리 포함)</p>
+              </div>
+              <div class="shorts-actions">
+                <button type="button" class="shorts-action-btn shorts-like-btn" data-shorts-like aria-pressed="false" aria-label="좋아요, 89개">
+                  <svg class="shorts-like-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.4 2 5 5.4 5c2 0 3.4 1.1 4.1 2.3.7-1.2 2.1-2.3 4.1-2.3 3.4 0 5 3.4 3.4 6.9C19.5 16.4 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">89</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-comment aria-haspopup="dialog" aria-label="댓글 보기, 15개">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M21 12c0 4.4-4 8-9 8-1 0-2-.1-3-.4L4 21l1.5-4C4.6 15.6 3 13.9 3 12c0-4.4 4-8 9-8s9 3.6 9 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">15</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-share aria-haspopup="dialog" aria-label="공유하기">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="10.8" x2="15.9" y2="7.2" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="13.2" x2="15.9" y2="16.8" stroke="currentColor" stroke-width="2"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">공유</span>
+                </button>
+              </div>
+            </li>
+
+            <li class="shorts-card shorts-bg-5" data-index="4" data-video-id="shorts-video-5" aria-label="월요일은 정미소도 쉽니다" hidden>
+              <video class="shorts-illust" id="shorts-video-5"
+                     src="assets/shorts-sample-5.mp4"
+                     poster="assets/shorts-sample-5-poster.jpg"
+                     loop playsinline preload="metadata"
+                     aria-hidden="true" tabindex="-1"></video>
+              <div class="shorts-scrim"></div>
+              <div class="shorts-content">
+                <span class="shorts-badge">NOTICE</span>
+                <h3>월요일은 정미소도 쉽니다</h3>
+                <p>매주 월요일은 매장 정비를 위한 정기 휴무일입니다. (더미 샘플 영상, 소리 포함)</p>
+              </div>
+              <div class="shorts-actions">
+                <button type="button" class="shorts-action-btn shorts-like-btn" data-shorts-like aria-pressed="false" aria-label="좋아요, 21개">
+                  <svg class="shorts-like-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.1C.4 8.4 2 5 5.4 5c2 0 3.4 1.1 4.1 2.3.7-1.2 2.1-2.3 4.1-2.3 3.4 0 5 3.4 3.4 6.9C19.5 16.4 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">21</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-comment aria-haspopup="dialog" aria-label="댓글 보기, 3개">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M21 12c0 4.4-4 8-9 8-1 0-2-.1-3-.4L4 21l1.5-4C4.6 15.6 3 13.9 3 12c0-4.4 4-8 9-8s9 3.6 9 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">3</span>
+                </button>
+                <button type="button" class="shorts-action-btn" data-shorts-share aria-haspopup="dialog" aria-label="공유하기">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2.4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="10.8" x2="15.9" y2="7.2" stroke="currentColor" stroke-width="2"/><line x1="8.1" y1="13.2" x2="15.9" y2="16.8" stroke="currentColor" stroke-width="2"/></svg>
+                  <span class="shorts-action-count" aria-hidden="true">공유</span>
+                </button>
+              </div>
+            </li>
+
+          </ul>
+
+        </div>
+
+        <p id="shorts-status" class="sr-only" role="status" aria-live="polite"></p>
+      </div>
+
+      <!-- 댓글 모달 (목업) -->
+      <div class="shorts-modal-backdrop" id="shorts-comment-modal" hidden>
+        <div class="shorts-modal" role="dialog" aria-modal="true" aria-labelledby="shorts-comment-title">
+          <div class="shorts-modal-head">
+            <h2 id="shorts-comment-title">댓글</h2>
+            <button type="button" class="shorts-modal-close" data-shorts-modal-close aria-label="댓글 창 닫기">✕</button>
+          </div>
+          <div class="shorts-modal-body">
+            <p>댓글 기능은 아직 준비 중입니다. 조금만 기다려 주세요.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 공유 모달 (목업) -->
+      <div class="shorts-modal-backdrop" id="shorts-share-modal" hidden>
+        <div class="shorts-modal" role="dialog" aria-modal="true" aria-labelledby="shorts-share-title">
+          <div class="shorts-modal-head">
+            <h2 id="shorts-share-title">공유하기</h2>
+            <button type="button" class="shorts-modal-close" data-shorts-modal-close aria-label="공유 창 닫기">✕</button>
+          </div>
+          <div class="shorts-modal-body">
+            <ul class="shorts-share-options">
+              <li><button type="button" class="shorts-share-option" data-shorts-share-mock>링크 복사</button></li>
+              <li><button type="button" class="shorts-share-option" data-shorts-share-mock>카카오톡</button></li>
+              <li><button type="button" class="shorts-share-option" data-shorts-share-mock>문자 메시지</button></li>
+            </ul>
+            <p class="hint">공유 기능은 아직 준비 중입니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 메뉴 ================= -->
+  <section id="panel-menu" role="tabpanel" aria-labelledby="tab-menu" tabindex="0" hidden>
+    <div class="container">
+      <p class="eyebrow">MENU</p>
+      <h2 id="menu-heading" class="section-heading">시그니처 메뉴</h2>
+      <p class="section-lede">
+        직접 로스팅한 원두와, 매장에서 도정한 현미로 만든 디저트를 함께 소개합니다.
+      </p>
+
+      <!-- 자동 슬라이드 배너: 신메뉴·시즌 음료 등 소식 5개. 정지 버튼과 이전/다음, 점 내비게이션 제공 -->
+      <div class="promo-banner" id="promo-banner" aria-roledescription="carousel" aria-label="메뉴 소식 배너">
+        <div class="promo-viewport">
+          <ul class="promo-track" id="promo-track">
+            <li class="promo-slide promo-bg-1" data-index="0" aria-roledescription="슬라이드" aria-label="5개 중 1번째: 신메뉴 출시, 흑임자라떼">
+              <svg class="promo-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <circle cx="9.3" cy="10" r="0.9" fill="currentColor"/>
+                <circle cx="14.2" cy="9" r="0.9" fill="currentColor"/>
+                <circle cx="12" cy="13.5" r="0.9" fill="currentColor"/>
+                <circle cx="9.8" cy="15.5" r="0.9" fill="currentColor"/>
+                <circle cx="14.6" cy="14" r="0.9" fill="currentColor"/>
+              </svg>
+              <div class="promo-content">
+                <p class="promo-eyebrow">NEW MENU</p>
+                <h3>신메뉴 출시, 흑임자라떼</h3>
+                <p>고소하게 볶은 흑임자를 듬뿍 갈아 넣은 진한 곡물 라떼가 새로 나왔어요.</p>
+              </div>
+            </li>
+
+            <li class="promo-slide promo-bg-2" data-index="1" aria-roledescription="슬라이드" aria-label="5개 중 2번째: 시즌 음료, 히비스커스티" hidden>
+              <svg class="promo-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 3c2.5 3 3.5 5.3 3.5 7.3a3.5 3.5 0 0 1-7 0C8.5 8.3 9.5 6 12 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M12 14v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M8.5 18h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+              <div class="promo-content">
+                <p class="promo-eyebrow">SEASON</p>
+                <h3>시즌 음료, 히비스커스티</h3>
+                <p>여름 한정으로 선보이는 새콤달콤한 히비스커스티, 차갑게도 즐겨보세요.</p>
+              </div>
+            </li>
+
+            <li class="promo-slide promo-bg-3" data-index="2" aria-roledescription="슬라이드" aria-label="5개 중 3번째: 이달의 원두, 게이샤" hidden>
+              <svg class="promo-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 9h11a2 2 0 0 1 2 2v1a3 3 0 0 1-3 3h-1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 9v6a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M8 6.5c0-1 .8-1 .8-2S8 3 8 3M11.5 6.5c0-1 .8-1 .8-2S11.5 3 11.5 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+              <div class="promo-content">
+                <p class="promo-eyebrow">THIS MONTH</p>
+                <h3>이달의 원두, 게이샤</h3>
+                <p>이달의 스페셜티 원두로 내린 핸드드립 커피를 한정 수량으로 만나보세요.</p>
+              </div>
+            </li>
+
+            <li class="promo-slide promo-bg-4" data-index="3" aria-roledescription="슬라이드" aria-label="5개 중 4번째: 정기 휴무 안내" hidden>
+              <svg class="promo-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="4" y="5.5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M4 9.5h16" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M8 3.5v3M16 3.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M9 13.5l2.2 2.2L15.5 11.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div class="promo-content">
+                <p class="promo-eyebrow">NOTICE</p>
+                <h3>정기 휴무 안내</h3>
+                <p>오후정미소는 매장 정비를 위해 매주 월요일 정기 휴무입니다.</p>
+              </div>
+            </li>
+
+            <li class="promo-slide promo-bg-5" data-index="4" aria-roledescription="슬라이드" aria-label="5개 중 5번째: 찜하기와 장바구니 이용 안내" hidden>
+              <svg class="promo-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 20s-7-4.4-9.3-8.7C1.2 8.1 3 5 6.3 5c1.9 0 3.3 1 4 2.4C11 6 12.4 5 14.3 5c3.3 0 5.1 3.1 3.6 6.3C15.7 15.6 12 20 12 20Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              </svg>
+              <div class="promo-content">
+                <p class="promo-eyebrow">TIP</p>
+                <h3>찜하고, 담고, 한눈에</h3>
+                <p>메뉴에서 하트 버튼으로 찜하고, 장바구니에 담아 우측 상단에서 한 번에 확인하세요.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="promo-controls">
+          <button type="button" class="promo-nav-btn" id="promo-prev" aria-label="이전 소식 보기">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <button type="button" class="promo-toggle" id="promo-toggle" aria-pressed="false">
+            <svg class="promo-toggle-icon icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="7" y="5" width="4" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <rect x="14" y="5" width="4" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            <svg class="promo-toggle-icon icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false" hidden>
+              <path d="M8 5l11 7-11 7V5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+            <span id="promo-toggle-label">일시정지</span>
+          </button>
+
+          <button type="button" class="promo-nav-btn" id="promo-next" aria-label="다음 소식 보기">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <div class="promo-dots" id="promo-dots" role="group" aria-label="배너 슬라이드 바로가기">
+            <button type="button" class="promo-dot" data-index="0" aria-label="1번째 슬라이드로 이동" aria-current="true"><span class="promo-dot-track"><span class="promo-dot-fill"></span></span></button>
+            <button type="button" class="promo-dot" data-index="1" aria-label="2번째 슬라이드로 이동" aria-current="false"><span class="promo-dot-track"><span class="promo-dot-fill"></span></span></button>
+            <button type="button" class="promo-dot" data-index="2" aria-label="3번째 슬라이드로 이동" aria-current="false"><span class="promo-dot-track"><span class="promo-dot-fill"></span></span></button>
+            <button type="button" class="promo-dot" data-index="3" aria-label="4번째 슬라이드로 이동" aria-current="false"><span class="promo-dot-track"><span class="promo-dot-fill"></span></span></button>
+            <button type="button" class="promo-dot" data-index="4" aria-label="5번째 슬라이드로 이동" aria-current="false"><span class="promo-dot-track"><span class="promo-dot-fill"></span></span></button>
+          </div>
+        </div>
+
+        <!-- 자동 재생 중에는 조용히 넘어가고, 사용자가 직접 조작(이전/다음/점/정지)했을 때만 안내한다 -->
+        <p id="promo-status" class="sr-only" role="status" aria-live="polite"></p>
+      </div>
+
+      <!-- 2단계 카테고리 드롭다운: 대분류 → 소분류 선택 후 검색 버튼을 눌러야 목록이 갱신됩니다. -->
+      <form id="menu-filter-form" class="menu-filter-form" role="search" aria-label="메뉴 카테고리 검색">
+        <fieldset class="menu-filter">
+          <legend>메뉴 카테고리 선택</legend>
+          <div class="filter-row">
+            <div class="select-group">
+              <label for="menu-cat-main">대분류</label>
+              <select id="menu-cat-main">
+                <option value="all">전체</option>
+                <option value="coffee">커피</option>
+                <option value="tea">논커피 · 티</option>
+                <option value="dessert">디저트</option>
+              </select>
+            </div>
+            <div class="select-group">
+              <label for="menu-cat-sub">소분류</label>
+              <select id="menu-cat-sub" aria-describedby="menu-cat-sub-hint" disabled>
+                <option value="all">전체</option>
+              </select>
+              <span id="menu-cat-sub-hint" class="hint">대분류를 먼저 선택하면 활성화됩니다. 소분류를 고르지 않아도 검색할 수 있습니다.</span>
+            </div>
+            <div class="select-group search-group">
+              <span class="spacer-label" aria-hidden="true"></span>
+              <button type="submit" class="btn btn-primary btn-search" id="menu-search-btn">
+                <span aria-hidden="true">🔍</span> 검색
+              </button>
+            </div>
+          </div>
+          <p id="menu-filter-status" class="filter-status" role="status" aria-live="polite">전체 24개 메뉴를 표시하고 있습니다.</p>
+        </fieldset>
+      </form>
+
+      <!-- 장바구니 · 찜 현황 요약. 각 카드의 담기/찜하기 조작 결과가 여기로 실시간 안내됩니다. -->
+      <div class="order-summary">
+        <span role="status" aria-live="polite" aria-atomic="true" id="cart-status">
+          <span aria-hidden="true">🛒</span> 장바구니가 비어 있습니다.
+        </span>
+        <span role="status" aria-live="polite" aria-atomic="true" id="wish-status">
+          <span aria-hidden="true">♥</span> 찜한 메뉴가 없습니다.
+        </span>
+        <button type="button" class="btn btn-outline btn-sm" id="open-cart-popover-btn">장바구니 상세보기</button>
+      </div>
+
+      <ul class="menu-grid" id="menu-list">
+
+        <li class="menu-card" data-main="coffee" data-sub="espresso" data-item="아메리카노" data-price="4500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m1-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m1-title">아메리카노가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#6B3819"/>
+            <rect x="128" y="60" width="18" height="26" rx="9" fill="none" stroke="#6B3819" stroke-width="5"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>아메리카노</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (아메리카노)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>직접 로스팅한 원두로 추출한 깔끔한 아메리카노.</p>
+            <span class="price">4,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="아메리카노 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="아메리카노 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="coffee" data-sub="espresso" data-item="카페라떼" data-price="5000">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m2-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m2-title">카페라떼가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#8A4A23"/>
+            <rect x="72" y="45" width="56" height="18" rx="10" fill="#FBF8F3"/>
+            <rect x="128" y="60" width="18" height="26" rx="9" fill="none" stroke="#8A4A23" stroke-width="5"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>카페라떼</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (카페라떼)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>고소한 우유 거품을 얹은 부드러운 카페라떼.</p>
+            <span class="price">5,000원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="카페라떼 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="카페라떼 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="coffee" data-sub="espresso" data-item="카푸치노" data-price="5000">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m3-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m3-title">카푸치노가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#8A4A23"/>
+            <rect x="72" y="45" width="56" height="26" rx="10" fill="#FBF8F3"/>
+            <rect x="128" y="60" width="18" height="26" rx="9" fill="none" stroke="#8A4A23" stroke-width="5"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>카푸치노</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (카푸치노)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>풍성한 우유 거품으로 마무리한 카푸치노.</p>
+            <span class="price">5,000원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="카푸치노 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="카푸치노 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="coffee" data-sub="espresso" data-item="바닐라라떼" data-price="5500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m3b-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m3b-title">바닐라라떼가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#C99A5B"/>
+            <rect x="72" y="45" width="56" height="18" rx="10" fill="#FBF8F3"/>
+            <rect x="128" y="60" width="18" height="26" rx="9" fill="none" stroke="#C99A5B" stroke-width="5"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>바닐라라떼</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (바닐라라떼)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>은은한 바닐라 시럽을 더해 부드럽게 즐기는 라떼.</p>
+            <span class="price">5,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="바닐라라떼 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="바닐라라떼 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="coffee" data-sub="drip" data-item="정미소 브루" data-price="6500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m4-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m4-title">정미소 브루 커피가 담긴 유리잔 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="70" y="40" width="60" height="80" rx="6" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+            <rect x="76" y="60" width="48" height="55" fill="#6B3819"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>정미소 브루 <span class="badge">베스트</span></h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (정미소 브루)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>양평 현지 로스터리 원두를 매장에서 직접 내린 핸드드립 커피.</p>
+            <span class="price">6,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="정미소 브루 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="정미소 브루 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="coffee" data-sub="drip" data-item="핸드드립 시그니처" data-price="7500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m5-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m5-title">핸드드립 시그니처 커피가 담긴 유리잔 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <rect x="70" y="40" width="60" height="80" rx="6" fill="#FBF8F3" stroke="#4B5D3A" stroke-width="3"/>
+            <rect x="76" y="65" width="48" height="50" fill="#4B5D3A"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>핸드드립 시그니처 <span class="badge">한정</span></h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (핸드드립 시그니처)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>계절마다 바뀌는 스페셜티 원두로 내리는 핸드드립 커피.</p>
+            <span class="price">7,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="핸드드립 시그니처 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="핸드드립 시그니처 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="coffee" data-sub="drip" data-item="콜드브루" data-price="5800">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m5b-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m5b-title">콜드브루가 담긴 유리잔 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="76" y="35" width="48" height="90" rx="6" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+            <rect x="82" y="70" width="36" height="48" fill="#2A2420"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>콜드브루</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (콜드브루)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>12시간 저온으로 우려낸 부드럽고 진한 콜드브루.</p>
+            <span class="price">5,800원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="콜드브루 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="콜드브루 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="coffee" data-sub="drip" data-item="디카페인 드립" data-price="6800">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m5c-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m5c-title">디카페인 드립 커피가 담긴 유리잔 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <rect x="70" y="40" width="60" height="80" rx="6" fill="#FBF8F3" stroke="#8A4A23" stroke-width="3"/>
+            <rect x="76" y="65" width="48" height="50" fill="#B9803D"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>디카페인 드립</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (디카페인 드립)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>카페인 부담 없이 즐기는 부드러운 디카페인 원두 드립.</p>
+            <span class="price">6,800원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="디카페인 드립 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="디카페인 드립 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="grain" data-item="도정현미 라떼" data-price="6000">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m6-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m6-title">현미 라떼가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#8A4A23"/>
+            <rect x="72" y="45" width="56" height="18" rx="10" fill="#FBF8F3"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>도정현미 라떼</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (도정현미 라떼)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>매장에서 직접 볶은 현미를 우려 부드럽게 완성한 곡물 라떼.</p>
+            <span class="price">6,000원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="도정현미 라떼 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="도정현미 라떼 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="grain" data-item="보리차라떼" data-price="5500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m7-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m7-title">보리차라떼가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#C99A5B"/>
+            <rect x="72" y="45" width="56" height="18" rx="10" fill="#FBF8F3"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>보리차라떼</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (보리차라떼)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>구수하게 우려낸 보리차에 우유를 더한 라떼.</p>
+            <span class="price">5,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="보리차라떼 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="보리차라떼 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="grain" data-item="흑임자라떼" data-price="6200">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m7b-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m7b-title">흑임자라떼가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#2A2420"/>
+            <rect x="72" y="45" width="56" height="18" rx="10" fill="#FBF8F3"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>흑임자라떼</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (흑임자라떼)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>고소하게 볶은 흑임자를 갈아 넣은 진한 곡물 라떼.</p>
+            <span class="price">6,200원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="흑임자라떼 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="흑임자라떼 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="grain" data-item="단호박라떼" data-price="6000">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m7c-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m7c-title">단호박라떼가 담긴 컵 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="72" y="45" width="56" height="70" rx="10" fill="#D98A2B"/>
+            <rect x="72" y="45" width="56" height="18" rx="10" fill="#FBF8F3"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>단호박라떼</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (단호박라떼)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>달큰하게 찐 단호박을 갈아 넣어 든든한 라떼.</p>
+            <span class="price">6,000원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="단호박라떼 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="단호박라떼 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="tea" data-item="정미소 유자차" data-price="6000">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m8-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m8-title">유자차가 담긴 찻잔 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <ellipse cx="100" cy="95" rx="45" ry="28" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+            <ellipse cx="100" cy="90" rx="38" ry="16" fill="#D98A2B"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>정미소 유자차</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (정미소 유자차)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>인근 농가에서 담근 유자청으로 만든 따뜻한 유자차.</p>
+            <span class="price">6,000원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="정미소 유자차 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="정미소 유자차 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="tea" data-item="캐모마일 티" data-price="5500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m9-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m9-title">캐모마일 티가 담긴 찻잔 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <ellipse cx="100" cy="95" rx="45" ry="28" fill="#FBF8F3" stroke="#4B5D3A" stroke-width="3"/>
+            <ellipse cx="100" cy="90" rx="38" ry="16" fill="#EFD98A"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>캐모마일 티</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (캐모마일 티)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>은은한 향으로 마음을 편안하게 해주는 캐모마일 차.</p>
+            <span class="price">5,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="캐모마일 티 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="캐모마일 티 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="tea" data-item="페퍼민트티" data-price="5500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m9b-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m9b-title">페퍼민트티가 담긴 찻잔 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <ellipse cx="100" cy="95" rx="45" ry="28" fill="#FBF8F3" stroke="#4B5D3A" stroke-width="3"/>
+            <ellipse cx="100" cy="90" rx="38" ry="16" fill="#8FBF9F"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>페퍼민트티</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (페퍼민트티)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>산뜻한 민트 향으로 입안을 개운하게 해주는 차.</p>
+            <span class="price">5,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="페퍼민트티 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="페퍼민트티 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="tea" data-sub="tea" data-item="히비스커스티" data-price="5800">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m9c-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m9c-title">히비스커스티가 담긴 찻잔 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <ellipse cx="100" cy="95" rx="45" ry="28" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+            <ellipse cx="100" cy="90" rx="38" ry="16" fill="#B23A1E"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>히비스커스티</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (히비스커스티)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>새콤달콤한 붉은빛의 허브차, 차갑게도 즐길 수 있어요.</p>
+            <span class="price">5,800원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="히비스커스티 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="히비스커스티 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="bakery" data-item="쌀 파운드케이크" data-price="5500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m10-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m10-title">쌀 파운드케이크 조각 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="55" y="70" width="90" height="35" rx="4" fill="#C99A5B"/>
+            <rect x="55" y="60" width="90" height="14" rx="6" fill="#B9803D"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>쌀 파운드케이크 <span class="badge">한정</span></h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (쌀 파운드케이크)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>매일 아침 구워내는 우리쌀 파운드케이크, 하루 30개 한정 판매.</p>
+            <span class="price">5,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="쌀 파운드케이크 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="쌀 파운드케이크 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="bakery" data-item="현미 스콘" data-price="5000">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m11-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m11-title">현미 스콘 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <path d="M60 105 L100 55 L140 105 Z" fill="#C99A5B"/>
+            <path d="M60 105 L100 60 L140 105 Z" fill="none" stroke="#B9803D" stroke-width="3"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>현미 스콘</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (현미 스콘)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>겉은 바삭하고 속은 촉촉한 현미 스콘.</p>
+            <span class="price">5,000원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="현미 스콘 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="현미 스콘 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="bakery" data-item="통밀 크루아상" data-price="4800">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m11b-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m11b-title">통밀 크루아상 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <path d="M55 95 Q100 55 145 95 Q100 80 55 95 Z" fill="#C99A5B" stroke="#B9803D" stroke-width="3"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>통밀 크루아상</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (통밀 크루아상)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>통밀가루로 결을 살려 구운 담백한 크루아상.</p>
+            <span class="price">4,800원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="통밀 크루아상 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="통밀 크루아상 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="bakery" data-item="흑미 마들렌" data-price="4500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m11c-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m11c-title">흑미 마들렌 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <ellipse cx="100" cy="90" rx="42" ry="30" fill="#2A2420"/>
+            <ellipse cx="100" cy="82" rx="34" ry="20" fill="#4A3B2F"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>흑미 마들렌</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (흑미 마들렌)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>흑미 가루를 더해 은은한 색과 향을 낸 마들렌.</p>
+            <span class="price">4,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="흑미 마들렌 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="흑미 마들렌 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="cake" data-item="티라미수" data-price="7000">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m12-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m12-title">티라미수 조각 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="60" y="55" width="80" height="16" fill="#8A4A23"/>
+            <rect x="60" y="71" width="80" height="16" fill="#F1E7D5"/>
+            <rect x="60" y="87" width="80" height="16" fill="#8A4A23"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>티라미수</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (티라미수)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>에스프레소를 촉촉하게 적셔 층층이 쌓은 티라미수.</p>
+            <span class="price">7,000원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="티라미수 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="티라미수 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="cake" data-item="우리쌀 치즈케이크" data-price="6500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m13-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m13-title">우리쌀 치즈케이크 조각 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <rect x="55" y="70" width="90" height="35" rx="4" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+            <rect x="55" y="60" width="90" height="14" rx="6" fill="#C99A5B"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>우리쌀 치즈케이크</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (우리쌀 치즈케이크)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>우리쌀 크럼을 바닥에 깐 부드러운 치즈케이크.</p>
+            <span class="price">6,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="우리쌀 치즈케이크 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="우리쌀 치즈케이크 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="cake" data-item="당근케이크" data-price="6800">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m13b-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m13b-title">당근케이크 조각 일러스트</title>
+            <rect width="200" height="150" fill="#E4D3B5"/>
+            <rect x="60" y="55" width="80" height="50" fill="#D98A2B"/>
+            <rect x="60" y="55" width="80" height="10" fill="#FBF8F3"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>당근케이크</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (당근케이크)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>계피 향이 은은한 당근케이크에 크림치즈 프로스팅을 얹었어요.</p>
+            <span class="price">6,800원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="당근케이크 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="당근케이크 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+        <li class="menu-card" data-main="dessert" data-sub="cake" data-item="말차 롤케이크" data-price="6500">
+          <svg class="thumb" viewBox="0 0 200 150" role="img" aria-labelledby="m13c-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="m13c-title">말차 롤케이크 조각 일러스트</title>
+            <rect width="200" height="150" fill="#F1E7D5"/>
+            <circle cx="100" cy="80" r="42" fill="#FBF8F3" stroke="#4B5D3A" stroke-width="3"/>
+            <path d="M100 80 m-42 0 a42 42 0 0 1 84 0" fill="#4B5D3A"/>
+          </svg>
+          <div class="body">
+            <div class="card-head">
+              <h3>말차 롤케이크</h3>
+              <button type="button" class="wish-btn" aria-pressed="false" aria-label="찜하기 (말차 롤케이크)">
+                <svg class="wish-icon-svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.5s-7.2-4.5-9.6-9C.8 8 2.6 4.5 6.2 4.5c2 0 3.6 1.1 4.4 2.6a5.1 5.1 0 0 1 4.4-2.6c3.6 0 5.4 3.5 3.8 7-2.4 4.5-9.6 9-9.6 9Z"/></svg>
+              </button>
+            </div>
+            <p>진한 말차 크림을 폭신한 시트로 돌돌 만 롤케이크.</p>
+            <span class="price">6,500원</span>
+            <div class="order-controls">
+              <div class="qty-stepper">
+                <button type="button" class="qty-btn qty-minus" aria-label="말차 롤케이크 수량 줄이기">−</button>
+                <span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">1</span><span class="sr-only">개</span></span>
+                <button type="button" class="qty-btn qty-plus" aria-label="말차 롤케이크 수량 늘리기">+</button>
+              </div>
+              <button type="button" class="btn btn-primary btn-cart">
+                <span aria-hidden="true">🛒</span> 장바구니 담기
+              </button>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+      <p class="menu-note">
+        모든 음료는 소포장 무포장 컵 선택이 가능합니다. 알레르기 유발 성분이 궁금하시면 카운터 직원에게 말씀해 주세요.
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= 공간 소개 ================= -->
+  <section id="panel-space" role="tabpanel" aria-labelledby="tab-space" tabindex="0" hidden>
+    <div class="container">
+      <p class="eyebrow">SPACE</p>
+      <h2 id="space-heading" class="section-heading">공간 둘러보기</h2>
+      <p class="section-lede">
+        정미소 1층과 2층 다락, 그리고 뒷마당까지 세 개의 공간으로 나뉘어 있습니다.
+      </p>
+
+      <div class="gallery-grid">
+        <figure>
+          <svg viewBox="0 0 320 220" role="img" aria-labelledby="g1-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="g1-title">1층 홀 내부, 보존된 도정기와 원목 테이블 일러스트</title>
+            <rect width="320" height="220" fill="#E4D3B5"/>
+            <rect x="20" y="140" width="80" height="60" fill="#6B3819"/>
+            <rect x="120" y="60" width="40" height="120" fill="#8A4A23"/>
+            <circle cx="140" cy="70" r="14" fill="#F1E7D5" stroke="#4B5D3A" stroke-width="4"/>
+            <rect x="200" y="150" width="90" height="12" fill="#B9A183"/>
+          </svg>
+          <figcaption><strong>1층 홀</strong> 보존한 도정기 옆으로 원목 테이블을 배치한 메인 좌석입니다.</figcaption>
+        </figure>
+
+        <figure>
+          <svg viewBox="0 0 320 220" role="img" aria-labelledby="g2-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="g2-title">2층 다락 좌석, 낮은 채광창 일러스트</title>
+            <rect width="320" height="220" fill="#F1E7D5"/>
+            <polygon points="0,60 160,10 320,60 320,220 0,220" fill="#E4D3B5"/>
+            <rect x="60" y="90" width="60" height="40" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+            <rect x="200" y="90" width="60" height="40" fill="#FBF8F3" stroke="#6B3819" stroke-width="3"/>
+          </svg>
+          <figcaption><strong>2층 다락</strong> 서까래 아래 좌석 8석, 낮은 창으로 오후 볕이 깊게 들어옵니다.</figcaption>
+        </figure>
+
+        <figure>
+          <svg viewBox="0 0 320 220" role="img" aria-labelledby="g3-title" xmlns="http://www.w3.org/2000/svg">
+            <title id="g3-title">뒷마당 평상 좌석과 감나무 일러스트</title>
+            <rect width="320" height="220" fill="#E4D3B5"/>
+            <rect x="0" y="170" width="320" height="50" fill="#D9CCB8"/>
+            <rect x="40" y="120" width="100" height="16" fill="#8A4A23"/>
+            <line x1="90" y1="60" x2="90" y2="120" stroke="#4B5D3A" stroke-width="6"/>
+            <circle cx="90" cy="55" r="26" fill="#4B5D3A"/>
+          </svg>
+          <figcaption><strong>뒷마당</strong> 오래된 감나무 아래 평상 좌석, 반려동물과 함께 이용 가능합니다.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 운영시간 & 오시는 길 ================= -->
+  <section id="panel-visit" role="tabpanel" aria-labelledby="tab-visit" tabindex="0" hidden>
+    <div class="container">
+      <p class="eyebrow">VISIT</p>
+      <h2 id="visit-heading" class="section-heading">운영시간 &amp; 오시는 길</h2>
+
+      <div class="hours-wrap">
+        <table class="hours-table">
+          <caption>요일별 운영시간 안내</caption>
+          <thead>
+            <tr>
+              <th scope="col">요일</th>
+              <th scope="col">운영시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">화요일 ~ 금요일</th>
+              <td>오전 11:00 ~ 오후 8:00 (라스트오더 오후 7:20)</td>
+            </tr>
+            <tr>
+              <th scope="row">토요일 · 일요일</th>
+              <td>오전 10:00 ~ 오후 9:00 (라스트오더 오후 8:20)</td>
+            </tr>
+            <tr class="closed-day">
+              <th scope="row">월요일</th>
+              <td><span class="tag-closed">정기 휴무</span> — 매장 정비일입니다</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div>
+          <address>
+            경기도 양평군 서종면 정미소길 24<br>
+            대표전화: <a href="tel:0312345678">031-234-5678</a>
+          </address>
+
+          <p>
+            <a class="icon-link" href="https://map.example.com/ohu-jeongmiso" target="_blank" rel="noopener noreferrer">
+              <span aria-hidden="true">🗺️</span>
+              지도 애플리케이션에서 오후정미소 위치 보기
+              <span class="sr-only">(새 창에서 열림)</span>
+            </a>
+          </p>
+
+          <div class="map-fallback">
+            <strong>지도 이미지 대체 설명.</strong>
+            서종면사무소에서 정미소길을 따라 도보 8분, 버스정류장 '정미소입구'에서 하차 후 도보 3분 거리입니다.
+            건물 앞마당에 방문객 주차 공간 4면이 마련되어 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 소식 ================= -->
+  <section id="panel-newsletter" role="tabpanel" aria-labelledby="tab-newsletter" tabindex="0" hidden>
+    <div class="container">
+      <p class="eyebrow">NOTICE</p>
+      <h2 id="notice-board-heading" class="section-heading">오후정미소 소식</h2>
+      <p class="section-lede">새로운 메뉴, 휴무 안내 같은 소식을 여기서 확인하세요.</p>
+
+      <!-- 목록 화면: 표 + 페이지네이션 -->
+      <div id="notice-list-view">
+        <table class="notice-table" aria-labelledby="notice-board-heading">
+          <caption class="sr-only">오후정미소 소식 목록. 제목을 누르면 자세히 볼 수 있습니다.</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="notice-col-no">번호</th>
+              <th scope="col">제목</th>
+              <th scope="col" class="notice-col-date">날짜</th>
+            </tr>
+          </thead>
+          <tbody id="notice-table-body"></tbody>
+        </table>
+
+        <nav class="pagination" id="notice-pagination" aria-label="소식 목록 페이지">
+          <button type="button" class="pagination-btn" id="notice-prev-page" aria-label="이전 페이지">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="pagination-pages" id="notice-page-numbers"></div>
+          <button type="button" class="pagination-btn" id="notice-next-page" aria-label="다음 페이지">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </nav>
+      </div>
+
+      <!-- 상세 화면: 목록과 같은 자리에서 전환 (평소엔 숨김) -->
+      <div id="notice-detail-view" class="notice-detail" tabindex="-1" hidden>
+        <button type="button" class="btn btn-outline btn-sm" id="notice-back-btn">← 목록으로</button>
+        <p class="notice-detail-date" id="notice-detail-date"></p>
+        <h3 class="notice-detail-title" id="notice-detail-title"></h3>
+        <p class="notice-detail-body" id="notice-detail-body"></p>
+      </div>
+
+      <hr class="notice-divider" aria-hidden="true">
+
+      <p class="eyebrow">SUBSCRIBE</p>
+      <h2 id="newsletter-heading" class="section-heading">새 소식 받아보기</h2>
+      <p class="section-lede">
+        계절 메뉴 출시와 워크숍 일정을 이메일로 먼저 안내해 드립니다. 발송 빈도는 월 1회입니다.
+      </p>
+
+      <form class="form-card" id="newsletter-form" novalidate>
+        <h3 class="sr-only">뉴스레터 신청 양식</h3>
+
+        <div class="form-row">
+          <label for="nl-name">이름 <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(필수 입력)</span></label>
+          <input type="text" id="nl-name" name="name" autocomplete="name" placeholder="예: 김오후" aria-required="true" aria-describedby="nl-name-hint">
+          <span id="nl-name-hint" class="hint">받으실 분 성함을 입력해 주세요.</span>
+        </div>
+
+        <div class="form-row">
+          <label for="nl-email">이메일 주소 <span class="required-mark" aria-hidden="true">*</span><span class="sr-only">(필수 입력)</span></label>
+          <input type="email" id="nl-email" name="email" autocomplete="email" placeholder="you@example.com" aria-required="true" aria-describedby="nl-email-hint">
+          <span id="nl-email-hint" class="hint">예: name@example.com</span>
+        </div>
+
+        <fieldset>
+          <legend>받고 싶은 소식 (선택, 중복 가능)</legend>
+          <div class="checkbox-row">
+            <input type="checkbox" id="nl-menu" name="topics" value="menu">
+            <label for="nl-menu">계절 신메뉴 안내</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="nl-workshop" name="topics" value="workshop">
+            <label for="nl-workshop">원두 로스팅 워크숍 안내</label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="nl-closed" name="topics" value="closed">
+            <label for="nl-closed">임시 휴무 · 공지사항</label>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn btn-primary">신청하기</button>
+
+        <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container footer-grid">
+    <div>
+      <h2>오후정미소</h2>
+      <address>
+        경기도 양평군 서종면 정미소길 24<br>
+        대표전화 031-234-5678<br>
+        이메일 hello@ohujeongmiso.example
+      </address>
+      <ul class="sns-list" aria-label="소셜 미디어 채널">
+        <li>
+          <a href="https://instagram.com/example" target="_blank" rel="noopener noreferrer" aria-label="오후정미소 인스타그램으로 이동 (새 창에서 열림)">
+            <span aria-hidden="true">IG</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://blog.example.com" target="_blank" rel="noopener noreferrer" aria-label="오후정미소 블로그로 이동 (새 창에서 열림)">
+            <span aria-hidden="true">B</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>바로가기</h3>
+      <ul class="footer-links">
+        <li><button type="button" class="footer-link-btn" data-tab-target="menu">메뉴</button></li>
+        <li><button type="button" class="footer-link-btn" data-tab-target="space">공간 소개</button></li>
+        <li><button type="button" class="footer-link-btn" data-tab-target="visit">운영시간 · 오시는 길</button></li>
+        <li><button type="button" class="footer-link-btn" data-tab-target="newsletter">소식</button></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>정책</h3>
+      <ul class="footer-links">
+        <li><a href="#">웹 접근성 정책</a></li>
+        <li><a href="#">개인정보 처리방침</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>&copy; 2026 오후정미소. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* 페이지 진입 시 화면에 아무것도 보이지 않는 빈 대상에 조용히 초점을 둔다.
+     이렇게 하면 사용자가 처음 Tab을 눌렀을 때 그다음 초점 대상인 "본문 바로가기"
+     건너뛰기 링크가 항상, 확실하게 화면에 나타난다. */
+  var initialFocusTarget = document.getElementById('initial-focus-target');
+  if(initialFocusTarget){ initialFocusTarget.focus(); }
+
+  /* ---------- 글자 크기 조절 (aria-live="polite"로 변경 상태 안내) ---------- */
+  var root = document.documentElement;
+  var step = 0;
+  var MIN = -2, MAX = 3;
+  var fontStatus = document.getElementById('font-size-status');
+
+  function announceFontSize(extraNote){
+    var percent = Math.round((1 + step * 0.1) * 100);
+    var message = '글자 크기 ' + percent + '%';
+    if(extraNote){ message += ' — ' + extraNote; }
+    // 텍스트를 비웠다가 다시 채우면 값이 동일하게 유지되는 경우에도
+    // 스크린리더가 변경을 놓치지 않고 다시 읽어준다.
+    fontStatus.textContent = '';
+    window.setTimeout(function(){
+      fontStatus.textContent = message;
+    }, 30);
+  }
+
+  function applyScale(){
+    var scale = 1 + (step * 0.1);
+    root.style.setProperty('--scale', scale.toFixed(2));
+  }
+
+  document.getElementById('font-increase').addEventListener('click', function(){
+    if(step < MAX){
+      step++;
+      applyScale();
+      announceFontSize();
+    } else {
+      announceFontSize('더 이상 크게 조절할 수 없습니다');
+    }
+  });
+  document.getElementById('font-decrease').addEventListener('click', function(){
+    if(step > MIN){
+      step--;
+      applyScale();
+      announceFontSize();
+    } else {
+      announceFontSize('더 이상 작게 조절할 수 없습니다');
+    }
+  });
+  document.getElementById('font-reset').addEventListener('click', function(){
+    step = 0;
+    applyScale();
+    announceFontSize('기본값으로 초기화되었습니다');
+  });
+
+  /* ---------- 고대비 모드 ---------- */
+  var contrastBtn = document.getElementById('contrast-toggle');
+  contrastBtn.addEventListener('click', function(){
+    var isHigh = root.getAttribute('data-contrast') === 'high';
+    if(isHigh){
+      root.removeAttribute('data-contrast');
+      contrastBtn.setAttribute('aria-pressed', 'false');
+    } else {
+      root.setAttribute('data-contrast', 'high');
+      contrastBtn.setAttribute('aria-pressed', 'true');
+    }
+  });
+
+  /* ---------- 탭 내비게이션 (WAI-ARIA Tabs, 수동 활성화 패턴) ----------
+     방향키(←→ / Home / End): 포커스만 이동 (roving tabindex), 선택 상태는 바뀌지 않음
+     Enter / Space: 현재 포커스된 탭을 실제로 선택·활성화
+     클릭: 즉시 선택·활성화 */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('#primary-nav .tab'));
+  var panels = {
+    home: document.getElementById('panel-home'),
+    shorts: document.getElementById('panel-shorts'),
+    menu: document.getElementById('panel-menu'),
+    space: document.getElementById('panel-space'),
+    visit: document.getElementById('panel-visit'),
+    newsletter: document.getElementById('panel-newsletter')
+  };
+
+  function keyOf(tabEl){
+    return tabEl.id.replace('tab-', '');
+  }
+
+  /* 포커스만 다른 탭으로 옮긴다. 선택 상태(aria-selected)와 패널 표시는 그대로 둔다. */
+  function moveFocusTo(index){
+    tabs.forEach(function(t, i){
+      t.setAttribute('tabindex', i === index ? '0' : '-1');
+    });
+    tabs[index].focus();
+  }
+
+  /* 실제로 탭을 선택·활성화한다. */
+  function activateTab(key, opts){
+    opts = opts || {};
+    tabs.forEach(function(t){
+      var isTarget = keyOf(t) === key;
+      t.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+      t.setAttribute('tabindex', isTarget ? '0' : '-1');
+      if(isTarget && opts.moveFocus){ t.focus(); }
+    });
+    Object.keys(panels).forEach(function(k){
+      if(k === key){
+        panels[k].removeAttribute('hidden');
+        if(opts.moveFocusToPanel){ panels[k].focus(); }
+      } else {
+        panels[k].setAttribute('hidden', '');
+      }
+    });
+  }
+
+  tabs.forEach(function(tabEl, index){
+    tabEl.addEventListener('click', function(){
+      activateTab(keyOf(tabEl));
+    });
+
+    tabEl.addEventListener('keydown', function(e){
+      var newIndex = null;
+
+      if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+        newIndex = (index + 1) % tabs.length;
+      } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+        newIndex = (index - 1 + tabs.length) % tabs.length;
+      } else if(e.key === 'Home'){
+        newIndex = 0;
+      } else if(e.key === 'End'){
+        newIndex = tabs.length - 1;
+      }
+
+      if(newIndex !== null){
+        e.preventDefault();
+        moveFocusTo(newIndex);
+        return;
+      }
+
+      if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+        e.preventDefault();
+        activateTab(keyOf(tabEl));
+      }
+    });
+  });
+
+  /* 히어로 버튼, 푸터 바로가기처럼 탭 밖에서 특정 탭으로 이동시키는 버튼 */
+  var tabLinkButtons = Array.prototype.slice.call(document.querySelectorAll('[data-tab-target]'));
+  tabLinkButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var target = btn.getAttribute('data-tab-target');
+      activateTab(target, { moveFocusToPanel: true });
+    });
+  });
+
+  /* ---------- 메뉴 카테고리 드롭다운 (2단계: 대분류 → 소분류) ---------- */
+  var categoryData = {
+    coffee:  { label: '커피',        subs: { espresso: '에스프레소 베이스', drip: '드립 커피' } },
+    tea:     { label: '논커피 · 티', subs: { grain: '곡물 음료', tea: '차' } },
+    dessert: { label: '디저트',      subs: { bakery: '베이커리', cake: '케이크' } }
+  };
+
+  var mainSelect = document.getElementById('menu-cat-main');
+  var subSelect = document.getElementById('menu-cat-sub');
+  var filterForm = document.getElementById('menu-filter-form');
+  var filterStatus = document.getElementById('menu-filter-status');
+  var menuCards = Array.prototype.slice.call(document.querySelectorAll('#menu-list .menu-card'));
+
+  /* 대분류 선택값에 맞춰 소분류 옵션 목록을 새로 구성한다. (목록 필터링과는 별개 동작) */
+  function renderSubOptions(mainKey){
+    subSelect.innerHTML = '';
+
+    var optAll = document.createElement('option');
+    optAll.value = 'all';
+    optAll.textContent = '전체';
+    subSelect.appendChild(optAll);
+
+    if(mainKey === 'all'){
+      subSelect.disabled = true;
+    } else {
+      subSelect.disabled = false;
+      var subs = categoryData[mainKey].subs;
+      Object.keys(subs).forEach(function(subKey){
+        var opt = document.createElement('option');
+        opt.value = subKey;
+        opt.textContent = subs[subKey];
+        subSelect.appendChild(opt);
+      });
+    }
+    subSelect.value = 'all';
+  }
+
+  /* 현재 대분류·소분류 선택값에 맞춰 메뉴 카드를 보이거나 숨긴다.
+     검색 버튼을 누르거나(폼 제출) 처음 화면을 열었을 때만 실행된다. */
+  function applyMenuFilter(){
+    var mainVal = mainSelect.value;
+    // 소분류가 비활성화된 상태(대분류=전체)일 때도 검색이 정상 동작하도록
+    // disabled 여부와 무관하게 항상 현재 값을 그대로 읽는다.
+    var subVal = subSelect.value;
+    var visibleCount = 0;
+
+    menuCards.forEach(function(card){
+      var matchMain = (mainVal === 'all') || (card.getAttribute('data-main') === mainVal);
+      var matchSub = (subVal === 'all') || (card.getAttribute('data-sub') === subVal);
+      var show = matchMain && matchSub;
+      card.hidden = !show;
+      if(show){ visibleCount++; }
+    });
+
+    var totalCount = menuCards.length;
+    var message = visibleCount === totalCount
+      ? '전체 ' + totalCount + '개 메뉴를 표시하고 있습니다.'
+      : '전체 ' + totalCount + '개 메뉴 중 ' + visibleCount + '개를 표시하고 있습니다.';
+    filterStatus.textContent = message;
+  }
+
+  /* 대분류를 바꾸면 소분류 옵션만 새로 구성한다. 목록 필터링은 검색 버튼을 눌러야 실행된다. */
+  mainSelect.addEventListener('change', function(){
+    renderSubOptions(mainSelect.value);
+  });
+
+  /* 검색 버튼 클릭(또는 셀렉트 안에서 Enter) → 폼 제출 → 그 시점의 대분류/소분류 값으로 필터링.
+     대분류만 고르고 소분류를 건드리지 않아도 subSelect.value는 'all'이므로 정상적으로 검색된다. */
+  filterForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    applyMenuFilter();
+  });
+
+  renderSubOptions('all');
+  applyMenuFilter();
+
+  /* ---------- 메뉴 소식 배너 (자동 슬라이드 + 정지 버튼) ---------- */
+  (function initPromoBanner(){
+    var track = document.getElementById('promo-track');
+    var slides = Array.prototype.slice.call(track.querySelectorAll('.promo-slide'));
+    var dots = Array.prototype.slice.call(document.querySelectorAll('.promo-dot'));
+    var prevBtn = document.getElementById('promo-prev');
+    var nextBtn = document.getElementById('promo-next');
+    var toggleBtn = document.getElementById('promo-toggle');
+    var toggleLabel = document.getElementById('promo-toggle-label');
+    var pauseIcon = toggleBtn.querySelector('.icon-pause');
+    var playIcon = toggleBtn.querySelector('.icon-play');
+    var statusEl = document.getElementById('promo-status');
+    var banner = document.getElementById('promo-banner');
+
+    var AUTOPLAY_MS = 5000;
+    var current = 0;
+    var timerId = null;
+    var isPlaying = false;
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function showSlide(index, opts){
+      opts = opts || {};
+      current = (index + slides.length) % slides.length;
+
+      slides.forEach(function(slide, i){
+        slide.hidden = (i !== current);
+      });
+      dots.forEach(function(dot, i){
+        dot.setAttribute('aria-current', i === current ? 'true' : 'false');
+        // 지나간 슬라이드는 진행 바를 꽉 채운 상태로 고정해 '여기까지 봤다'는 걸 알려준다.
+        dot.classList.toggle('is-past', i < current);
+      });
+      updateDotFillState();
+
+      // 자동 재생 중 넘어갈 때는 조용히, 사용자가 직접 조작했을 때만 안내한다.
+      if(opts.announce){
+        var heading = slides[current].querySelector('h3');
+        statusEl.textContent = (current + 1) + '번째 슬라이드, ' + slides.length + '개 중: ' + (heading ? heading.textContent : '');
+      }
+    }
+
+    /* 현재 슬라이드의 진행 바가 실제로 채워지는 애니메이션을 재생할지(is-filling)는
+       "몇 번째 슬라이드인가"와 "지금 재생 중인가" 둘 다에 달려 있으므로 따로 뗀 함수로 관리한다. */
+    function updateDotFillState(){
+      dots.forEach(function(dot, i){
+        dot.classList.toggle('is-filling', i === current && isPlaying);
+      });
+    }
+
+    function updateToggleUI(){
+      toggleBtn.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+      pauseIcon.hidden = !isPlaying;
+      playIcon.hidden = isPlaying;
+      toggleLabel.textContent = isPlaying ? '일시정지' : '재생';
+      toggleBtn.setAttribute('aria-label', isPlaying ? '배너 자동 재생 일시정지' : '배너 자동 재생 시작');
+      updateDotFillState();
+    }
+
+    function play(){
+      if(timerId){ return; }
+      isPlaying = true;
+      updateToggleUI();
+      timerId = window.setInterval(function(){
+        showSlide(current + 1, { announce: false });
+      }, AUTOPLAY_MS);
+    }
+
+    function pause(announce){
+      isPlaying = false;
+      updateToggleUI();
+      if(timerId){
+        window.clearInterval(timerId);
+        timerId = null;
+      }
+      if(announce){
+        statusEl.textContent = '배너 자동 재생을 일시정지했습니다.';
+      }
+    }
+
+    prevBtn.addEventListener('click', function(){
+      pause(false);
+      showSlide(current - 1, { announce: true });
+    });
+    nextBtn.addEventListener('click', function(){
+      pause(false);
+      showSlide(current + 1, { announce: true });
+    });
+    dots.forEach(function(dot){
+      dot.addEventListener('click', function(){
+        pause(false);
+        showSlide(parseInt(dot.getAttribute('data-index'), 10), { announce: true });
+      });
+    });
+    toggleBtn.addEventListener('click', function(){
+      if(isPlaying){
+        pause(true);
+      } else {
+        play();
+        statusEl.textContent = '배너 자동 재생을 시작합니다.';
+      }
+    });
+
+    // 키보드로 배너 안의 컨트롤에 초점이 들어오면 자동 재생을 멈춘다 (WCAG 2.2.2 - 정지 수단 보장).
+    // 단, 정지/재생 토글 버튼 자신은 클릭 시 스스로 포커스도 함께 받기 때문에, 여기서 먼저
+    // pause()를 호출해버리면 토글 버튼의 클릭 핸들러가 "이미 멈춰있다"고 착각해 반대로
+    // 재생을 다시 시작해버리는 충돌이 생긴다. 토글 버튼은 자기 자신의 로직으로 완결되므로 제외한다.
+    banner.addEventListener('focusin', function(e){
+      if(e.target === toggleBtn){ return; }
+      if(isPlaying){ pause(false); }
+    });
+
+    showSlide(0, { announce: false });
+
+    // 다시 움직임을 최소화하고 싶다는 사용자 설정(prefers-reduced-motion)이 있으면
+    // 처음부터 자동 재생을 시작하지 않고 정지 상태로 둔다.
+    if(!prefersReducedMotion){
+      play();
+    } else {
+      updateToggleUI();
+    }
+  })();
+
+  /* ---------- 쇼츠 뷰어 (목업): 자동재생 없이, 버튼/방향키로만 이동 ---------- */
+  (function(){
+    var viewer = document.getElementById('shorts-viewer');
+    if(!viewer){ return; }
+
+    var frame = viewer.querySelector('.shorts-frame');
+    var track = document.getElementById('shorts-track');
+    var cards = Array.prototype.slice.call(track.querySelectorAll('.shorts-card'));
+    var prevBtn = document.getElementById('shorts-prev');
+    var nextBtn = document.getElementById('shorts-next');
+    var centralPlayBtn = document.getElementById('shorts-play-toggle');
+    var statusEl = document.getElementById('shorts-status');
+    var current = 0;
+
+    // 아이콘을 2개 두고 하나씩 숨기는 대신, 아이콘을 1개만 두고 그 안의 모양을 직접 바꾼다.
+    // "둘 다 보임" / "둘 다 사라짐" 같은 상태 자체가 구조적으로 나올 수 없다.
+    var PLAY_ICON_MARKUP = '<path d="M8 5l11 7-11 7V5Z" fill="currentColor"/>';
+    var PAUSE_ICON_MARKUP = '<rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/>';
+
+    // 재생/일시정지 버튼은 카드마다 따로 두지 않고, 영상 프레임 중앙에 하나만 두고
+    // 현재 보이는 카드가 뭔지에 따라 그 카드의 영상을 대상으로 삼는다.
+    function syncCentralPlayButton(){
+      var card = cards[current];
+      var videoId = card.getAttribute('data-video-id');
+      var icon = centralPlayBtn.querySelector('.shorts-play-pause-icon');
+      var label = centralPlayBtn.querySelector('.shorts-play-label');
+      var isPlaying = false;
+      if(videoId){
+        var video = document.getElementById(videoId);
+        isPlaying = video && !video.paused;
+      }
+      icon.innerHTML = isPlaying ? PAUSE_ICON_MARKUP : PLAY_ICON_MARKUP;
+      label.textContent = isPlaying ? '일시정지' : '재생';
+    }
+
+    function showCard(index, opts){
+      opts = opts || {};
+      if(index < 0 || index >= cards.length){ return; }
+      current = index;
+
+      pauseAllVideos();
+      cards.forEach(function(card, i){ card.hidden = (i !== current); });
+      prevBtn.disabled = (current === 0);
+      nextBtn.disabled = (current === cards.length - 1);
+      syncCentralPlayButton();
+
+      if(opts.announce !== false){
+        var heading = cards[current].querySelector('h3');
+        // 개수가 계속 늘어나는 피드라 "N개 중 M번째" 같은 카운트는 의미가 없어진다.
+        // 실제 쇼츠/릴스처럼 지금 보고 있는 영상이 무엇인지만 안내한다.
+        statusEl.textContent = '쇼츠: ' + (heading ? heading.textContent : '');
+      }
+    }
+
+    prevBtn.addEventListener('click', function(){ showCard(current - 1); });
+    nextBtn.addEventListener('click', function(){ showCard(current + 1); });
+
+    // 위/아래(또는 좌/우) 방향키로 이전·다음 쇼츠 이동. 뷰어에 초점이 있을 때만 동작한다.
+    viewer.addEventListener('keydown', function(e){
+      if(e.key === 'ArrowDown' || e.key === 'ArrowRight'){
+        e.preventDefault();
+        showCard(current + 1);
+      } else if(e.key === 'ArrowUp' || e.key === 'ArrowLeft'){
+        e.preventDefault();
+        showCard(current - 1);
+      } else if(e.key === 'Home'){
+        e.preventDefault();
+        showCard(0);
+      } else if(e.key === 'End'){
+        e.preventDefault();
+        showCard(cards.length - 1);
+      }
+    });
+
+    // 카드 1은 실제(더미) 영상이 있어 재생/일시정지를 토글한다.
+    // 나머지 카드는 아직 영상이 없으므로 정직하게 준비 중 상태만 안내한다
+    // (프로필/로그인 페이지의 "준비 중입니다" 안내와 동일한 패턴).
+    // 버튼 클릭이 아니라 다른 경로(자동 정지 등)로 상태가 바뀌어도 항상 아이콘이 맞도록,
+    // 영상 자체의 play/pause 이벤트를 구독해서 중앙 버튼 아이콘을 갱신한다.
+    Array.prototype.slice.call(track.querySelectorAll('video')).forEach(function(video){
+      video.addEventListener('play', syncCentralPlayButton);
+      video.addEventListener('pause', syncCentralPlayButton);
+    });
+
+    centralPlayBtn.addEventListener('click', function(){
+      var card = cards[current];
+      var videoId = card.getAttribute('data-video-id');
+      if(videoId){
+        var video = document.getElementById(videoId);
+        if(video.paused){
+          video.play();
+        } else {
+          video.pause();
+        }
+        // 아이콘/라벨 갱신은 위에서 구독한 video의 play/pause 이벤트가 처리한다.
+        // (상태 안내는 aria-pressed 없이 라벨 텍스트 전환만으로 전달하고, 클릭마다
+        // 별도 음성 안내도 하지 않는다 — 상태 안내 방식이 여러 개 겹치면 오히려 혼란스럽다.)
+      } else {
+        statusEl.textContent = '영상은 아직 준비 중입니다. 조금만 기다려 주세요.';
+      }
+    });
+
+    // 음소거 전환 버튼: 좋아요처럼 진짜 온/오프 토글이라 aria-pressed로 상태를 전달한다.
+    // 단, 라벨 텍스트는 "음소거"로 고정하고 aria-pressed만 바뀌게 해서, 상태 전달
+    // 방식이 라벨과 aria-pressed 두 군데로 겹치지 않게 한다 (재생 버튼과 반대 선택).
+    var MUTE_ICON_MARKUP = '<path d="M4 9v6h4l5 5V4L8 9H4Z" fill="currentColor"/><line x1="16" y1="9" x2="21" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="21" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+    var UNMUTE_ICON_MARKUP = '<path d="M4 9v6h4l5 5V4L8 9H4Z" fill="currentColor"/><path d="M16.2 8.8a5 5 0 0 1 0 6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.8 6.2a9 9 0 0 1 0 11.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+
+    var muteBtn = document.getElementById('shorts-mute-toggle');
+    var isMuted = false;
+
+    function applyMuteState(){
+      Array.prototype.slice.call(track.querySelectorAll('video')).forEach(function(video){
+        video.muted = isMuted;
+      });
+      muteBtn.querySelector('.shorts-mute-icon').innerHTML = isMuted ? MUTE_ICON_MARKUP : UNMUTE_ICON_MARKUP;
+      muteBtn.setAttribute('aria-pressed', String(isMuted));
+    }
+
+    muteBtn.addEventListener('click', function(){
+      isMuted = !isMuted;
+      applyMuteState();
+    });
+
+    applyMuteState(); // 초기 상태를 모든 영상에 일괄 적용
+
+    // 좋아요 · 댓글 · 공유 (오른쪽 하단 세로 아이콘)
+    var commentModal = document.getElementById('shorts-comment-modal');
+    var shareModal = document.getElementById('shorts-share-modal');
+    var lastModalTrigger = null;
+
+    function getFocusableInModal(container){
+      var selector = 'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      return Array.prototype.filter.call(container.querySelectorAll(selector), function(el){
+        return el.offsetParent !== null;
+      });
+    }
+
+    function openShortsModal(modal, triggerBtn){
+      closeAllPopovers(); // 헤더 팝오버가 열려 있었다면 같은 inert 상태를 공유하므로 먼저 정리
+      lastModalTrigger = triggerBtn;
+      modal.hidden = false;
+      applyInertOutside(modal);
+      var dialog = modal.querySelector('[role="dialog"]');
+      var focusables = getFocusableInModal(dialog);
+      if(focusables[0]){ focusables[0].focus(); }
+    }
+
+    function closeShortsModal(modal){
+      if(modal.hidden){ return; }
+      modal.hidden = true;
+      removeInertOutside();
+      if(lastModalTrigger){ lastModalTrigger.focus(); }
+      lastModalTrigger = null;
+    }
+
+    function findOpenShortsModal(){
+      if(commentModal && !commentModal.hidden){ return commentModal; }
+      if(shareModal && !shareModal.hidden){ return shareModal; }
+      return null;
+    }
+
+    // 좋아요 하트도 같은 방식: <path> 하나의 fill/stroke만 바꿔서
+    // 선(윤곽) 하트 ↔ 면(채움) 하트를 표현한다. 아이콘 자체가 사라질 수 없는 구조.
+    function setLikeIcon(likeBtn, liked){
+      var path = likeBtn.querySelector('.shorts-like-icon path');
+      if(!path){ return; }
+      if(liked){
+        path.setAttribute('fill', 'currentColor');
+        path.removeAttribute('stroke');
+        path.removeAttribute('stroke-width');
+        path.removeAttribute('stroke-linejoin');
+      } else {
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', 'currentColor');
+        path.setAttribute('stroke-width', '2');
+        path.setAttribute('stroke-linejoin', 'round');
+      }
+    }
+
+    track.addEventListener('click', function(e){
+      var likeBtn = e.target.closest('[data-shorts-like]');
+      if(likeBtn){
+        var pressed = likeBtn.getAttribute('aria-pressed') === 'true';
+        var willBeLiked = !pressed;
+        var countEl = likeBtn.querySelector('.shorts-action-count');
+        var count = parseInt(countEl.textContent, 10) || 0;
+        count = willBeLiked ? count + 1 : count - 1;
+        countEl.textContent = count;
+        likeBtn.setAttribute('aria-pressed', String(willBeLiked));
+        likeBtn.setAttribute('aria-label', '좋아요, ' + count + '개');
+        likeBtn.classList.toggle('is-liked', willBeLiked);
+        // 색상만으로 상태를 구분하지 않도록, 아이콘 자체를 선(윤곽) 하트 ↔ 면(채움) 하트로 바꾼다.
+        setLikeIcon(likeBtn, willBeLiked);
+        statusEl.textContent = willBeLiked ? '좋아요를 눌렀습니다.' : '좋아요를 취소했습니다.';
+        return;
+      }
+
+      var commentBtn = e.target.closest('[data-shorts-comment]');
+      if(commentBtn){
+        openShortsModal(commentModal, commentBtn);
+        return;
+      }
+
+      var shareBtn = e.target.closest('[data-shorts-share]');
+      if(shareBtn){
+        openShortsModal(shareModal, shareBtn);
+        return;
+      }
+
+      var shareMockBtn = e.target.closest('[data-shorts-share-mock]');
+      if(shareMockBtn){
+        closeShortsModal(shareModal);
+        statusEl.textContent = '공유 기능은 아직 준비 중입니다.';
+        return;
+      }
+    });
+
+    // 다른 카드로 넘어가면, 화면 밖에서 계속 재생 중인 영상이 남지 않도록 모두 정지시킨다
+    // (WCAG 2.2.2 - 화면에 보이지 않는 움직이는 콘텐츠가 계속 돌아가지 않도록).
+    // video.pause()를 호출하면 위에서 구독해 둔 'pause' 이벤트가 알아서 아이콘도 되돌린다.
+    function pauseAllVideos(){
+      Array.prototype.slice.call(track.querySelectorAll('video')).forEach(function(video){
+        if(!video.paused){ video.pause(); }
+      });
+    }
+
+    [commentModal, shareModal].forEach(function(modal){
+      if(!modal){ return; }
+      // 배경(어두운 바깥 영역)을 클릭하면 닫는다. 안쪽 .shorts-modal 클릭은 무시.
+      modal.addEventListener('click', function(e){
+        if(e.target === modal){ closeShortsModal(modal); }
+      });
+      Array.prototype.slice.call(modal.querySelectorAll('[data-shorts-modal-close]')).forEach(function(btn){
+        btn.addEventListener('click', function(){ closeShortsModal(modal); });
+      });
+    });
+
+    // Esc로 닫기, Tab/Shift+Tab은 모달 안에서만 순환하도록 처리 (헤더 팝오버와 동일한 패턴)
+    document.addEventListener('keydown', function(e){
+      var openModal = findOpenShortsModal();
+      if(!openModal){ return; }
+
+      if(e.key === 'Escape'){
+        closeShortsModal(openModal);
+        return;
+      }
+
+      if(e.key === 'Tab'){
+        var dialog = openModal.querySelector('[role="dialog"]');
+        var focusables = getFocusableInModal(dialog);
+        if(focusables.length === 0){ return; }
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if(e.shiftKey && document.activeElement === first){
+          e.preventDefault();
+          last.focus();
+        } else if(!e.shiftKey && document.activeElement === last){
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    showCard(0, { announce: false });
+  })();
+
+
+  var cartStatus = document.getElementById('cart-status');
+  var wishStatus = document.getElementById('wish-status');
+  var cartPanelStatus = document.getElementById('cart-panel-status');
+  var cartIconBadge = document.getElementById('cart-icon-badge');
+  var cartTrigger = document.getElementById('cart-trigger');
+  var cartEmptyMessage = document.getElementById('cart-empty-message');
+  var cartTableWrap = document.getElementById('cart-table-wrap');
+  var cartTableBody = document.getElementById('cart-table-body');
+  var cartTotalCell = document.getElementById('cart-total-cell');
+  var myWishCount = document.getElementById('my-wish-count');
+  var myWishList = document.getElementById('my-wish-list');
+  var myWishEmpty = document.getElementById('my-wish-empty');
+
+  // MY 패널의 계정 메뉴: 로그인 페이지가 이제 실제로 있으므로 '로그인'은 그냥 링크로 이동하고,
+  // 아직 만들지 않은 프로필 설정만 여기서 안내 문구를 보여준다 (죽은 버튼이 되지 않도록).
+  var myActionStatus = document.getElementById('my-action-status');
+  document.getElementById('my-profile-btn').addEventListener('click', function(){
+    myActionStatus.textContent = '프로필 설정은 로그인 후 이용할 수 있어요.';
+  });
+
+  // 장바구니 담긴 항목: { 메뉴명: { qty, price } }
+  var cart = {};
+  // 찜한 항목 이름 집합: { 메뉴명: true }  → MY 패널의 찜 목록에 그대로 사용
+  var wishedItems = {};
+
+  function formatWon(n){
+    return n.toLocaleString('ko-KR') + '원';
+  }
+
+  /* 한글 받침 유무에 따라 '을/를' 조사를 정확히 붙여준다. */
+  function withEulReul(word){
+    var lastChar = word.charCodeAt(word.length - 1);
+    if(lastChar >= 0xAC00 && lastChar <= 0xD7A3){
+      var hasBatchim = (lastChar - 0xAC00) % 28 !== 0;
+      return word + (hasBatchim ? '을' : '를');
+    }
+    return word + '을';
+  }
+
+  function cartTotals(){
+    var count = 0;
+    var price = 0;
+    Object.keys(cart).forEach(function(name){
+      count += cart[name].qty;
+      price += cart[name].qty * cart[name].price;
+    });
+    return { count: count, price: price };
+  }
+
+  function updateCartStatus(){
+    var totals = cartTotals();
+    cartStatus.innerHTML = totals.count === 0
+      ? '<span aria-hidden="true">🛒</span> 장바구니가 비어 있습니다.'
+      : '<span aria-hidden="true">🛒</span> 장바구니 총 ' + totals.count + '개 · ' + formatWon(totals.price);
+
+    cartIconBadge.textContent = String(totals.count);
+    // 스크린리더 출력 형식: "장바구니, N개의 상품이 담겨있음, 버튼" ('버튼'은 네이티브 button role이 자동으로 덧붙여 읽어줌)
+    cartTrigger.setAttribute('aria-label', '장바구니, ' + totals.count + '개의 상품이 담겨있음');
+  }
+
+  function updateWishStatus(){
+    var wishCount = Object.keys(wishedItems).length;
+    wishStatus.innerHTML = wishCount === 0
+      ? '<span aria-hidden="true">♥</span> 찜한 메뉴가 없습니다.'
+      : '<span aria-hidden="true">♥</span> 찜한 메뉴 ' + wishCount + '개';
+    renderMyWishList();
+  }
+
+  /* MY 패널 안의 찜한 메뉴 목록을 wishedItems 상태에 맞춰 다시 그린다. */
+  function renderMyWishList(){
+    var names = Object.keys(wishedItems);
+    myWishCount.textContent = String(names.length);
+
+    if(names.length === 0){
+      myWishEmpty.hidden = false;
+      myWishList.hidden = true;
+      myWishList.innerHTML = '';
+      return;
+    }
+
+    myWishEmpty.hidden = true;
+    myWishList.hidden = false;
+    myWishList.innerHTML = names.map(function(name){
+      return '<li>' + name + '</li>';
+    }).join('');
+  }
+
+  /* 장바구니 패널 안의 표를 cart 객체 상태에 맞춰 다시 그린다. */
+  function renderCartPanel(){
+    var names = Object.keys(cart);
+
+    if(names.length === 0){
+      cartEmptyMessage.hidden = false;
+      cartTableWrap.hidden = true;
+      cartTableBody.innerHTML = '';
+      cartTotalCell.textContent = '0원';
+      return;
+    }
+
+    cartEmptyMessage.hidden = true;
+    cartTableWrap.hidden = false;
+    cartTableBody.innerHTML = '';
+
+    names.forEach(function(name){
+      var entry = cart[name];
+      var subtotal = entry.qty * entry.price;
+      var atMin = (entry.qty <= 1);
+
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-item', name);
+      tr.innerHTML =
+        '<th scope="row">' + name + '</th>' +
+        '<td>' +
+          '<div class="qty-stepper">' +
+            '<button type="button" class="qty-btn qty-minus" aria-label="' + name + ' 수량 줄이기" aria-disabled="' + atMin + '">\u2212</button>' +
+            '<span class="qty-value" aria-live="polite" aria-atomic="true"><span class="sr-only">현재 수량 </span><span class="qty-num">' + entry.qty + '</span><span class="sr-only">개</span></span>' +
+            '<button type="button" class="qty-btn qty-plus" aria-label="' + name + ' 수량 늘리기">+</button>' +
+          '</div>' +
+        '</td>' +
+        '<td>' + formatWon(entry.price) + '</td>' +
+        '<td class="cart-subtotal">' + formatWon(subtotal) + '</td>' +
+        '<td><button type="button" class="cart-remove-btn" aria-label="' + name + ' 장바구니에서 빼기">삭제</button></td>';
+
+      cartTableBody.appendChild(tr);
+    });
+
+    cartTotalCell.textContent = formatWon(cartTotals().price);
+  }
+
+  /* 장바구니 패널 표 안에서 발생하는 수량 변경·삭제는 이벤트 위임으로 한 번에 처리 */
+  cartTableBody.addEventListener('click', function(e){
+    var tr = e.target.closest('tr[data-item]');
+    if(!tr){ return; }
+    var name = tr.getAttribute('data-item');
+    var entry = cart[name];
+    if(!entry){ return; }
+
+    if(e.target.closest('.qty-plus')){
+      if(entry.qty < 20){
+        entry.qty++;
+        renderCartPanel();
+        updateCartStatus();
+        focusCartQtyButton(name, 'plus');
+        cartPanelStatus.textContent = name + ' ' + entry.qty + '개';
+      }
+    } else if(e.target.closest('.qty-minus')){
+      if(entry.qty > 1){
+        entry.qty--;
+        renderCartPanel();
+        updateCartStatus();
+        focusCartQtyButton(name, 'minus');
+        cartPanelStatus.textContent = name + ' ' + entry.qty + '개';
+      }
+    } else if(e.target.closest('.cart-remove-btn')){
+      var namesBeforeDelete = Object.keys(cart);
+      var deletedIndex = namesBeforeDelete.indexOf(name);
+
+      delete cart[name];
+      cartPanelStatus.textContent = withEulReul(name) + ' 장바구니에서 뺐습니다.';
+      renderCartPanel();
+      updateCartStatus();
+      moveFocusAfterCartRemove(deletedIndex);
+    }
+  });
+
+  /* 수량 변경 후 포커스 복구: renderCartPanel()이 표 전체를 innerHTML로 다시 그리기 때문에
+     방금 클릭한 +/- 버튼도 함께 파괴되고 새 버튼으로 교체된다. 그대로 두면 포커스가
+     대화상자(cart-panel) 쪽으로 빠져나가 버리므로, 같은 항목의 같은 버튼을 다시 찾아 포커스한다. */
+  function focusCartQtyButton(name, which){
+    var tr = cartTableBody.querySelector('tr[data-item="' + name + '"]');
+    if(!tr){ return; }
+    var btn = tr.querySelector(which === 'plus' ? '.qty-plus' : '.qty-minus');
+    if(btn){ btn.focus(); }
+  }
+
+  /* 삭제 후 포커스 이동: 다음 항목의 삭제 버튼 → (다음이 없으면) 이전 항목의 삭제 버튼 →
+     (항목이 하나도 안 남았으면) 빈 장바구니 안내의 "메뉴 보러 가기" 버튼 순으로 이동한다. */
+  function moveFocusAfterCartRemove(deletedIndex){
+    var remainingButtons = Array.prototype.slice.call(cartTableBody.querySelectorAll('.cart-remove-btn'));
+
+    if(remainingButtons.length === 0){
+      var emptyCta = cartEmptyMessage.querySelector('.cart-empty-cta');
+      if(emptyCta){ emptyCta.focus(); }
+      return;
+    }
+
+    // 삭제된 자리엔 원래 "다음 항목"이 당겨와 있으므로, 같은 인덱스로 포커스하면 다음 항목이 잡힌다.
+    // 삭제한 항목이 마지막이었다면 그 인덱스는 범위를 벗어나므로 마지막(=이전) 항목으로 보정한다.
+    var targetIndex = Math.min(deletedIndex, remainingButtons.length - 1);
+    remainingButtons[targetIndex].focus();
+  }
+
+  menuCards.forEach(function(card){
+    var itemName = card.getAttribute('data-item');
+    var itemPrice = parseInt(card.getAttribute('data-price'), 10);
+
+    var wishBtn = card.querySelector('.wish-btn');
+    var minusBtn = card.querySelector('.qty-minus');
+    var plusBtn = card.querySelector('.qty-plus');
+    var qtyNum = card.querySelector('.qty-num');
+    var cartBtn = card.querySelector('.btn-cart');
+
+    var qty = 1;
+    var QTY_MIN = 1;
+    var QTY_MAX = 20;
+
+    function renderQty(){
+      qtyNum.textContent = String(qty);
+      minusBtn.disabled = (qty <= QTY_MIN);
+      plusBtn.disabled = (qty >= QTY_MAX);
+    }
+    renderQty();
+
+    minusBtn.addEventListener('click', function(){
+      if(qty > QTY_MIN){ qty--; renderQty(); }
+    });
+    plusBtn.addEventListener('click', function(){
+      if(qty < QTY_MAX){ qty++; renderQty(); }
+    });
+
+    /* 찜하기: 대체텍스트는 "찜하기 (메뉴명)"으로 고정해두고, 상태는 aria-pressed 하나로만 전달한다.
+       (대체텍스트와 눌림 상태를 동시에 바꾸면 무엇을 누른 결과인지와 지금 상태가 뒤섞인다.)
+       하트가 실제로 채워지는 것 자체가 상태를 알려주는 시각적 단서이고, 누르는 순간 살짝
+       튀어오르는 팝 애니메이션을 더해 눌림을 더 분명하게 체감할 수 있게 했다. */
+    wishBtn.addEventListener('click', function(){
+      var isWished = wishBtn.getAttribute('aria-pressed') === 'true';
+      wishBtn.setAttribute('aria-pressed', String(!isWished));
+      if(isWished){
+        delete wishedItems[itemName];
+      } else {
+        wishedItems[itemName] = true;
+      }
+      wishBtn.classList.remove('is-popping');
+      // 리플로우를 강제로 한 번 일으켜서, 연속으로 빠르게 눌러도 팝 애니메이션이 매번 새로 재생되게 한다.
+      void wishBtn.offsetWidth;
+      wishBtn.classList.add('is-popping');
+      updateWishStatus();
+    });
+
+    cartBtn.addEventListener('click', function(){
+      if(cart[itemName]){
+        cart[itemName].qty += qty;
+      } else {
+        cart[itemName] = { qty: qty, price: itemPrice };
+      }
+      cartPanelStatus.textContent = itemName + ' ' + qty + '개를 장바구니에 담았습니다.';
+      renderCartPanel();
+      updateCartStatus();
+    });
+  });
+
+  updateCartStatus();
+  updateWishStatus();
+  renderCartPanel();
+
+  /* ---------- 상단 우측 유틸 버튼: 알림 · MY · 장바구니 팝오버 (aria-modal 다이얼로그) ---------- */
+  var popoverConfigs = [
+    { trigger: document.getElementById('notif-trigger'), panel: document.getElementById('notif-panel') },
+    { trigger: document.getElementById('my-trigger'), panel: document.getElementById('my-panel') },
+    { trigger: cartTrigger, panel: document.getElementById('cart-panel') }
+  ];
+
+  function findOpenPopover(){
+    return popoverConfigs.filter(function(cfg){ return !cfg.panel.hidden; })[0];
+  }
+
+  /* 열려 있는 패널(panel)만 남기고, 그 조상 경로를 따라 올라가며 만나는 모든 형제 요소에
+     inert를 건다. inert가 걸린 요소는 포커스도 못 받고 클릭도 안 먹으며 스크린리더
+     가상 커서에서도 사라지므로, Tab/Shift+Tab으로도 패널 밖으로 초점이 절대 못 나간다. */
+  var inertedEls = [];
+
+  function applyInertOutside(panel){
+    inertedEls = [];
+    var el = panel;
+    while(el && el.parentElement && el !== document.body){
+      var parent = el.parentElement;
+      Array.prototype.forEach.call(parent.children, function(sibling){
+        if(sibling !== el && !sibling.hasAttribute('inert')){
+          sibling.setAttribute('inert', '');
+          inertedEls.push(sibling);
+        }
+      });
+      el = parent;
+    }
+  }
+
+  function removeInertOutside(){
+    inertedEls.forEach(function(el){ el.removeAttribute('inert'); });
+    inertedEls = [];
+  }
+
+  function closeAllPopovers(){
+    popoverConfigs.forEach(function(cfg){
+      cfg.panel.hidden = true;
+      cfg.trigger.setAttribute('aria-expanded', 'false');
+    });
+    removeInertOutside();
+  }
+
+  function openPopover(cfg){
+    closeAllPopovers();
+    cfg.panel.hidden = false;
+    cfg.trigger.setAttribute('aria-expanded', 'true');
+    applyInertOutside(cfg.panel);
+    var closeBtn = cfg.panel.querySelector('.popover-close');
+    if(closeBtn){ closeBtn.focus(); }
+  }
+
+  popoverConfigs.forEach(function(cfg){
+    cfg.trigger.addEventListener('click', function(){
+      var wasOpen = !cfg.panel.hidden;
+      if(wasOpen){
+        cfg.panel.hidden = true;
+        cfg.trigger.setAttribute('aria-expanded', 'false');
+        removeInertOutside();
+      } else {
+        openPopover(cfg);
+      }
+    });
+  });
+
+  // 패널 안의 닫기(✕) 버튼, 그리고 장바구니 빈 상태의 "메뉴 보러 가기" 버튼도 이 클래스로 처리
+  Array.prototype.slice.call(document.querySelectorAll('[data-popover-close]')).forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var panel = btn.closest('.popover-panel');
+      if(!panel){ return; }
+      var cfg = popoverConfigs.filter(function(c){ return c.panel === panel; })[0];
+      if(!cfg){ return; }
+      panel.hidden = true;
+      cfg.trigger.setAttribute('aria-expanded', 'false');
+      removeInertOutside();
+      // "메뉴 보러 가기"처럼 다른 탭으로 이동하는 버튼은 그쪽에서 포커스를 처리하므로 여기서는 건드리지 않는다.
+      if(!btn.hasAttribute('data-tab-target')){
+        cfg.trigger.focus();
+      }
+    });
+  });
+
+  // Esc: 열려 있는 패널을 닫고, 배경 inert를 해제한 뒤 포커스를 트리거 버튼으로 되돌린다.
+  // Tab / Shift+Tab: inert가 배경으로의 '탈출'은 막아주지만, 패널의 마지막(첫) 포커스
+  // 요소에서 더 넘어갈 곳이 없을 때 포커스가 body로 떨어지는 것까지는 막아주지 않으므로,
+  // 패널 안에서 순환하도록 직접 첫/마지막 요소로 되돌린다.
+  function getFocusableIn(container){
+    var selector = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    return Array.prototype.filter.call(container.querySelectorAll(selector), function(el){
+      return el.offsetParent !== null; // 화면에 실제로 보이는 요소만
+    });
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      var openCfg = findOpenPopover();
+      if(openCfg){
+        openCfg.panel.hidden = true;
+        openCfg.trigger.setAttribute('aria-expanded', 'false');
+        removeInertOutside();
+        openCfg.trigger.focus();
+      }
+      return;
+    }
+
+    if(e.key === 'Tab'){
+      var openPanelCfg = findOpenPopover();
+      if(!openPanelCfg){ return; }
+      var focusables = getFocusableIn(openPanelCfg.panel);
+      if(focusables.length === 0){ return; }
+      var first = focusables[0];
+      var last = focusables[focusables.length - 1];
+
+      if(e.shiftKey && document.activeElement === first){
+        e.preventDefault();
+        last.focus();
+      } else if(!e.shiftKey && document.activeElement === last){
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  // 패널 바깥을 클릭하면 닫는다. (배경이 inert 처리되어 있어 실제로는 대부분 클릭 자체가
+  // 발생하지 않지만, 헤더 여백처럼 inert되지 않은 영역을 위한 안전장치로 남겨둔다.)
+  // 주의: e.target을 직접 wrap.contains()로 검사하면, 클릭한 요소 자신이 그 클릭 처리 중에
+  // DOM에서 제거되는 경우(예: 장바구니 삭제 버튼) e.target이 이미 문서에서 떨어져 나가
+  // contains()가 항상 false를 반환해 팝업이 잘못 닫혀버린다. composedPath()는 이벤트가
+  // 처음 발생했을 때의 경로를 그대로 담고 있어 이런 문제가 없다.
+  document.addEventListener('click', function(e){
+    var openCfg = findOpenPopover();
+    if(!openCfg){ return; }
+    var wrap = openCfg.trigger.closest('.popover-wrap');
+    var path = e.composedPath ? e.composedPath() : [];
+    if(wrap && path.indexOf(wrap) === -1){
+      openCfg.panel.hidden = true;
+      openCfg.trigger.setAttribute('aria-expanded', 'false');
+      removeInertOutside();
+    }
+  });
+
+  // 메뉴 탭의 "장바구니 상세보기" 버튼 → 장바구니 팝오버 열기
+  var openCartPopoverBtn = document.getElementById('open-cart-popover-btn');
+  if(openCartPopoverBtn){
+    openCartPopoverBtn.addEventListener('click', function(e){
+      // 이 버튼은 헤더의 .popover-wrap 바깥(메뉴 탭 안)에 있다. stopPropagation 없이 두면
+      // 클릭이 document까지 버블링되어, 아래의 "바깥을 클릭하면 닫는다" 핸들러가 이 클릭을
+      // '팝오버 바깥 클릭'으로 오인해 방금 연 패널을 같은 틱에 바로 다시 닫아버린다
+      // (포커스가 패널 안으로 옮겨갔다가 열리자마자 사라지는 것처럼 보이는 원인이었다).
+      e.stopPropagation();
+      var cartCfg = popoverConfigs.filter(function(c){ return c.trigger === cartTrigger; })[0];
+      openPopover(cartCfg);
+    });
+  }
+
+  // ---------- 알림 벨 + "소식" 탭 표: 같은 데이터(notices)를 공유한다 ----------
+  // notifTrigger는 위 popoverConfigs에서 이미 조회해둔 참조를 그대로 재사용한다 (같은 요소를 두 번 조회하지 않음).
+  var notifTrigger = popoverConfigs.filter(function(c){ return c.panel.id === 'notif-panel'; })[0].trigger;
+  var notifDot = document.getElementById('notif-dot');
+  var notifList = document.getElementById('notif-list');
+
+  // 최신순으로 정렬되어 있다고 가정한다 (배열 맨 앞이 최신 글).
+  var notices = [
+    { id: 'n1', date: '2026.09.12', title: '신메뉴 흑임자라떼 출시', teaserHtml: '이번 주 신메뉴로 <strong>흑임자라떼</strong>가 출시됐어요.', body: '고소한 흑임자를 갈아 넣은 라떼가 이번 주부터 정식 메뉴로 추가되었습니다. 매장에서 맛보세요.', read: false },
+    { id: 'n2', date: '2026.09.05', title: '정기 휴무 안내', teaserHtml: '다음 주 월요일은 정기 휴무입니다.', body: '매주 월요일은 매장 정비를 위해 쉽니다. 방문 전 참고해 주세요.', read: false },
+    { id: 'n3', date: '2026.08.28', title: '가을 한정 메뉴 출시 예고', teaserHtml: '다음 달부터 <strong>가을 한정 메뉴</strong>가 순차 공개돼요.', body: '밤, 단호박을 활용한 가을 한정 메뉴가 다음 달부터 순차적으로 공개될 예정입니다.', read: true },
+    { id: 'n4', date: '2026.08.20', title: '매장 앞 주차 공간 확충 안내', teaserHtml: '매장 앞에 <strong>주차 공간</strong>이 새로 생겼어요.', body: '매장 앞 공터에 주차 공간 3면이 새로 마련되었습니다. 편하게 이용해 주세요.', read: true }
+  ];
+
+  function findNoticeIndex(id){
+    for(var i = 0; i < notices.length; i++){
+      if(notices[i].id === id){ return i; }
+    }
+    return -1;
+  }
+
+  function updateNotifBell(){
+    var hasUnread = notices.some(function(n){ return !n.read; });
+    notifDot.hidden = !hasUnread;
+    notifTrigger.setAttribute('aria-label', hasUnread ? '알림, 새로운 알림 있음' : '알림, 새로운 알림 없음');
+  }
+
+  /* 항목마다: 안 읽었을 때만 보이는 점(시각) + 읽음/안 읽음을 명시하는 스크린리더 전용 문구를 함께 넣는다.
+     둘 다 같은 정보를 전달하므로, 점이 안 보이는 사람도, 점 색을 구분 못 하는 사람도,
+     화면을 못 보는 사람도 동일하게 상태를 알 수 있다.
+     항목을 누르면 "소식" 탭의 해당 공지 상세로 이동하므로, 그 사실도 스크린리더 전용 문구로 안내한다. */
+  function renderNotifList(){
+    notifList.innerHTML = notices.map(function(n){
+      var stateText = n.read ? '읽음, ' : '안 읽음, ';
+      var dotHtml = n.read ? '' : '<span class="notif-dot-mark" aria-hidden="true"></span>';
+      var readClass = n.read ? ' is-read' : '';
+      return '<li><button type="button" class="notif-item' + readClass + '" data-id="' + n.id + '">' +
+        dotHtml +
+        '<span><span class="sr-only">' + stateText + '</span>' + n.teaserHtml + '<span class="sr-only">, 자세히 보기</span></span>' +
+        '</button></li>';
+    }).join('');
+    updateNotifBell();
+  }
+
+  // 항목을 누르면: 읽음으로 표시하고, 팝오버를 닫은 뒤, "소식" 탭으로 이동해서 해당 공지 상세를 바로 보여준다.
+  // (이전에는 클릭할 때마다 읽음/안읽음이 토글됐지만, 이제는 클릭이 "이동"이라는
+  // 실제 동작을 하게 되어 토글 방식은 더 이상 맞지 않는다.)
+  notifList.addEventListener('click', function(e){
+    var btn = e.target.closest('.notif-item');
+    if(!btn){ return; }
+    var id = btn.getAttribute('data-id');
+    closeAllPopovers();
+    activateTab('newsletter');
+    showNoticeDetail(id);
+  });
+
+  renderNotifList();
+
+  // ---------- "소식" 탭: 목록(표 + 페이지네이션) / 상세 화면 전환 ----------
+  var NOTICES_PER_PAGE = 2; // 지금은 샘플 4건이라 2건씩 나눠, 페이지네이션이 실제로 동작하는 걸 보여준다
+  var currentNoticePage = 1;
+  var currentDetailNoticeId = null; // "목록으로" 돌아갈 때 포커스를 되돌려줄 글의 id
+
+  var noticeListView = document.getElementById('notice-list-view');
+  var noticeDetailView = document.getElementById('notice-detail-view');
+  var noticeTableBody = document.getElementById('notice-table-body');
+  var noticePrevPageBtn = document.getElementById('notice-prev-page');
+  var noticeNextPageBtn = document.getElementById('notice-next-page');
+  var noticePageNumbers = document.getElementById('notice-page-numbers');
+
+  function renderNoticeTable(){
+    var totalPages = Math.max(1, Math.ceil(notices.length / NOTICES_PER_PAGE));
+    if(currentNoticePage > totalPages){ currentNoticePage = totalPages; }
+
+    var start = (currentNoticePage - 1) * NOTICES_PER_PAGE;
+    var pageItems = notices.slice(start, start + NOTICES_PER_PAGE);
+
+    // 번호는 게시판 관례대로 최신 글이 가장 큰 번호를 갖도록 매긴다.
+    noticeTableBody.innerHTML = pageItems.map(function(n, i){
+      var num = notices.length - (start + i);
+      return '<tr>' +
+        '<td class="notice-col-no">' + num + '</td>' +
+        '<td><button type="button" class="notice-title-btn" data-id="' + n.id + '">' + n.title + '</button></td>' +
+        '<td class="notice-col-date">' + n.date + '</td>' +
+        '</tr>';
+    }).join('');
+
+    renderNoticePagination(totalPages);
+  }
+
+  function renderNoticePagination(totalPages){
+    noticePrevPageBtn.disabled = (currentNoticePage === 1);
+    noticeNextPageBtn.disabled = (currentNoticePage === totalPages);
+
+    noticePageNumbers.innerHTML = '';
+    for(var p = 1; p <= totalPages; p++){
+      var pageBtn = document.createElement('button');
+      pageBtn.type = 'button';
+      pageBtn.className = 'pagination-page-btn';
+      pageBtn.textContent = String(p);
+      if(p === currentNoticePage){
+        pageBtn.setAttribute('aria-current', 'page');
+      }
+      pageBtn.addEventListener('click', (function(pageNum){
+        return function(){
+          currentNoticePage = pageNum;
+          renderNoticeTable();
+        };
+      })(p));
+      noticePageNumbers.appendChild(pageBtn);
+    }
+  }
+
+  noticePrevPageBtn.addEventListener('click', function(){
+    currentNoticePage -= 1;
+    renderNoticeTable();
+  });
+  noticeNextPageBtn.addEventListener('click', function(){
+    currentNoticePage += 1;
+    renderNoticeTable();
+  });
+
+  // 제목을 누르면 상세 화면으로 전환한다 (실제 게시판의 "제목 클릭 → 상세 페이지 이동"과 같은 동작).
+  noticeTableBody.addEventListener('click', function(e){
+    var titleBtn = e.target.closest('.notice-title-btn');
+    if(!titleBtn){ return; }
+    showNoticeDetail(titleBtn.getAttribute('data-id'));
+  });
+
+  function showNoticeDetail(id){
+    var index = findNoticeIndex(id);
+    if(index === -1){ return; }
+    var n = notices[index];
+
+    n.read = true;
+    currentNoticePage = Math.floor(index / NOTICES_PER_PAGE) + 1; // "목록으로" 돌아갔을 때 이 글이 있던 페이지를 보여주기 위해
+    currentDetailNoticeId = id;
+
+    document.getElementById('notice-detail-date').textContent = n.date;
+    document.getElementById('notice-detail-title').textContent = n.title;
+    document.getElementById('notice-detail-body').textContent = n.body;
+
+    noticeListView.hidden = true;
+    noticeDetailView.hidden = false;
+    noticeDetailView.focus();
+
+    updateNotifBell(); // 알림 벨 배지도 읽음 처리 반영
+  }
+
+  document.getElementById('notice-back-btn').addEventListener('click', function(){
+    noticeDetailView.hidden = true;
+    noticeListView.hidden = false;
+    renderNoticeTable(); // tbody를 innerHTML로 다시 그리므로, 이전 버튼 참조는 여기서부터 끊어진 노드가 된다
+
+    // 그래서 포커스 대상은 저장해 둔 엘리먼트가 아니라, 다시 그려진 뒤 id로 새로 찾는다.
+    var target = currentDetailNoticeId
+      ? noticeTableBody.querySelector('[data-id="' + currentDetailNoticeId + '"]')
+      : null;
+    if(target){ target.focus(); }
+  });
+
+  renderNoticeTable();
+
+  /* ---------- 뉴스레터 폼 검증 (오류 정정 지원) ---------- */
+  var form = document.getElementById('newsletter-form');
+  var status = document.getElementById('form-status');
+  var nameField = document.getElementById('nl-name');
+  var emailField = document.getElementById('nl-email');
+
+  function clearFieldError(field){
+    field.removeAttribute('aria-invalid');
+    var err = document.getElementById(field.id + '-error');
+    if(err){ err.parentNode.removeChild(err); }
+  }
+
+  function setFieldError(field, message){
+    field.setAttribute('aria-invalid', 'true');
+    var existing = document.getElementById(field.id + '-error');
+    if(!existing){
+      existing = document.createElement('span');
+      existing.id = field.id + '-error';
+      existing.className = 'error-text';
+      existing.setAttribute('role', 'alert');
+      field.insertAdjacentElement('afterend', existing);
+    }
+    existing.innerHTML = '<span aria-hidden="true">⚠</span> ' + message;
+    var describedBy = field.getAttribute('aria-describedby') || '';
+    if(describedBy.indexOf(existing.id) === -1){
+      field.setAttribute('aria-describedby', (describedBy + ' ' + existing.id).trim());
+    }
+  }
+
+  function isValidEmail(value){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    clearFieldError(nameField);
+    clearFieldError(emailField);
+    status.className = 'form-status';
+    status.textContent = '';
+
+    var firstInvalid = null;
+
+    if(nameField.value.trim() === ''){
+      setFieldError(nameField, '이름을 입력해 주세요.');
+      firstInvalid = firstInvalid || nameField;
+    }
+
+    if(emailField.value.trim() === ''){
+      setFieldError(emailField, '이메일 주소를 입력해 주세요.');
+      firstInvalid = firstInvalid || emailField;
+    } else if(!isValidEmail(emailField.value.trim())){
+      setFieldError(emailField, '올바른 이메일 주소 형식으로 입력해 주세요. 예: name@example.com');
+      firstInvalid = firstInvalid || emailField;
+    }
+
+    if(firstInvalid){
+      status.textContent = '입력 내용을 다시 확인해 주세요. 오류가 있는 항목이 있습니다.';
+      status.classList.add('is-visible', 'error');
+      // 스크린리더 초점은 옮겨가지만, 브라우저가 항상 그 위치로 화면을 스크롤해주는 건 아니어서
+      // (특히 화면을 아래로 내려서 신청하기 버튼을 누른 경우) 명시적으로 화면 중앙까지 스크롤한다.
+      // focus()의 기본 자동 스크롤과 우리가 지정한 스크롤이 서로 겹쳐 어긋나지 않도록
+      // preventScroll로 브라우저의 자동 스크롤은 끄고, scrollIntoView로 직접 제어한다.
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      firstInvalid.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+      firstInvalid.focus({ preventScroll: true });
+      return;
+    }
+
+    status.textContent = '신청이 접수되었습니다. ' + nameField.value.trim() + '님, 다음 소식부터 이메일로 안내해 드릴게요.';
+    status.classList.add('is-visible', 'success');
+    form.reset();
+  });
+})();
+</script>
+
+</body>
+</html>
