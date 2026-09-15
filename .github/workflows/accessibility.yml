@@ -17,7 +17,7 @@ jobs:
       - name: Node.js 설정
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: 필요 도구 설치
         run: npm install -g @axe-core/cli http-server
