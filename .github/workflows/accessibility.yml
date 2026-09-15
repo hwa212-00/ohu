@@ -1,3 +1,4 @@
+```yaml
 name: Accessibility Audit (aXe-core)
 
 on:
@@ -20,16 +21,20 @@ jobs:
           node-version: '20'
 
       - name: 필요 도구 설치
-        run: npm install -g axe-cli axe-core http-server
+        run: npm install -g @axe-core/cli http-server
 
       - name: Chrome 브라우저 설치
         run: sudo apt-get update && sudo apt-get install -y google-chrome-stable
+
+      - name: axe 버전 확인
+        run: axe-cli --version
 
       - name: HTTP 서버 시작 및 aXe 접근성 검사
         run: |
           http-server -p 8080 &
           SERVER_PID=$!
           sleep 2
-          axe http://localhost:8080/index.html http://localhost:8080/login.html http://localhost:8080/profile.html --exit || TEST_RESULT=$?
+          axe-cli http://localhost:8080/index.html http://localhost:8080/login.html http://localhost:8080/profile.html --exit || TEST_RESULT=$?
           kill $SERVER_PID
           exit ${TEST_RESULT:-0}
+```
