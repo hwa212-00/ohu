@@ -1,1 +1,26 @@
+name: Accessibility Audit (aXe-core)
 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  accessibility-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: axe-cli 및 필요 라이브러리 설치
+        run: npm install -g axe-cli axe-core
+
+      - name: aXe 접근성 검사 실행
+        run: axe index.html login.html profile.html --exit
